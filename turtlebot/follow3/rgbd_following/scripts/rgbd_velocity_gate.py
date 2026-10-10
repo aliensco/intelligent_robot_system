@@ -163,9 +163,18 @@ class Gate(object):
         self.reason = 'measured_visibility_stopping_path_blocked'
         measured_horizon = c['reaction_time'] + max(self.odometry.speed/c['braking_acceleration'],
                                                    self.odometry.angular/c['angular_braking_acceleration'])
+        measured_visible = visible_path(pose, self.observation, self.odometry.forward, self.odometry.yaw_rate,
+                                        self.camera, extrinsic, measured_horizon, c['visibility']['margin'])
+        # At rest near an image edge, a strict inner-margin test would reject
+        # even a turn back toward the target. Permit only non-worsening measured
+        # motion here; the command below must make visible recovery progress.
+        recovery_ready = abs(self.odometry.forward) <= c['stopped_linear']
+        if not measured_visible and recovery_ready:
+            measured_visible = visible_path(pose, self.observation, self.odometry.forward, self.odometry.yaw_rate,
+                                            self.camera, extrinsic, measured_horizon, c['visibility']['margin'],
+                                            recovery=True, require_progress=False)
         if (abs(self.odometry.lateral) > c['stopped_linear'] or
-                not visible_path(pose, self.observation, self.odometry.forward, self.odometry.yaw_rate,
-                                 self.camera, extrinsic, measured_horizon, c['visibility']['margin'])):
+                not measured_visible):
             return zero
         # Uniform scaling preserves curvature; every candidate is rechecked.
         # A future camera pose is evaluated with the current observed target.
@@ -173,8 +182,15 @@ class Gate(object):
         for scale in (1., .6, .3):
             vv, ww = v*scale, w*scale
             self.reason = 'visibility_path_blocked'
-            if not visible_path(pose, self.observation, vv, ww, self.camera, extrinsic,
-                                c['visibility']['horizon'], c['visibility']['margin']):
+            horizon = max(c['visibility']['horizon'], c['reaction_time'] +
+                          max(abs(vv)/c['braking_acceleration'], abs(ww)/c['angular_braking_acceleration']))
+            visible = visible_path(pose, self.observation, vv, ww, self.camera, extrinsic,
+                                   horizon, c['visibility']['margin'])
+            recentering = False
+            if not visible and recovery_ready and abs(vv) < 1e-6:
+                recentering = visible_path(pose, self.observation, vv, ww, self.camera, extrinsic,
+                                          horizon, c['visibility']['margin'], recovery=True)
+            if not visible and not recentering:
                 continue
             self.reason = 'measured_stopping_envelope_blocked'
             if not stopping_clear(self.grid, pose, self.odometry.speed, vv, c['footprint_radius'],
@@ -184,6 +200,8 @@ class Gate(object):
             if not swept_clear(self.grid, pose, vv, ww, c['footprint_radius'], c['braking_acceleration'], c['reaction_time']):
                 continue
             self.reason = ('executing' if self.execute else 'shadow_velocity_only') if scale == 1 else 'visibility_or_clearance_slowdown'
+            if recentering:
+                self.reason = 'visibility_recenter' if self.execute else 'shadow_visibility_recenter'
             out = Twist()
             out.linear.x, out.angular.z = vv, ww
             return out

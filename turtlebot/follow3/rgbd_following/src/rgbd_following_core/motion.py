@@ -28,6 +28,12 @@ def yaw(q):
 
 
 class Grid(object):
+    """OccupancyGrid published by ROS costmap_2d, not a probability map.
+
+    The publisher maps lethal obstacles to 100, inscribed inflation to 99,
+    soft inflation costs to 1..98 and unknown space to -1. Inflation describes
+    forbidden/costly ROBOT CENTER positions, not additional physical obstacles.
+    """
     def __init__(self, data, width, height, resolution, origin=(0., 0., 0.)):
         if (width <= 0 or height <= 0 or not finite(resolution) or resolution <= 0 or
                 len(data) != width * height or not all(finite(v) for v in origin)):
@@ -35,7 +41,14 @@ class Grid(object):
         self.data, self.width, self.height = data, width, height
         self.resolution, self.origin = resolution, origin
 
-    def clear(self, x, y, radius, threshold=95):
+    def clear(self, x, y, radius):
+        """Check a center exclusion and one explicit circular footprint.
+
+        Retain the map's inscribed center exclusion (including its padding),
+        then test the full footprint/envelope against lethal and unknown cells.
+        Applying the footprint to inflated 99-valued cells would count the
+        robot radius twice and incorrectly reject otherwise passable corridors.
+        """
         if not all(finite(v) for v in (x, y, radius)) or radius <= 0:
             return False
         dx, dy = x - self.origin[0], y - self.origin[1]
@@ -46,11 +59,15 @@ class Grid(object):
         y0, y1 = int(math.floor((gy - pad) / self.resolution)), int(math.floor((gy + pad) / self.resolution))
         if x0 < 0 or y0 < 0 or x1 >= self.width or y1 >= self.height:
             return False
+        center_x, center_y = int(math.floor(gx / self.resolution)), int(math.floor(gy / self.resolution))
+        center_value = self.data[center_y * self.width + center_x]
+        if center_value < 0 or center_value >= 99:
+            return False
         for iy in range(y0, y1 + 1):
             for ix in range(x0, x1 + 1):
                 if math.hypot((ix + .5) * self.resolution - gx, (iy + .5) * self.resolution - gy) <= pad:
                     value = self.data[iy * self.width + ix]
-                    if value < 0 or value >= threshold:
+                    if value < 0 or value >= 100:
                         return False
         return True
 

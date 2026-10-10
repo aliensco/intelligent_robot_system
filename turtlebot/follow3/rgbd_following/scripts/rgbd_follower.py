@@ -167,11 +167,15 @@ class Follower(object):
         if distance(robot, self.target) < c['minimum_distance']:
             return self.block('target_too_close')
         point = self.trail.behind(c['follow_distance'])
+        live_standoff = False
         if point is not None:
             self.rebuilding_trail = False
-        elif self.rebuilding_trail:
-            # After verified reacquisition use a live standoff goal, planned by
-            # move_base through observed free space, until enough new trail exists.
+        elif self.trail.points:
+            # On initial acquisition as well as verified reacquisition, use a
+            # live standoff goal until enough observed trail exists. This goal
+            # is planned by move_base through observed free space; it does not
+            # add an invented leader segment to the measured trail.
+            live_standoff = True
             dx, dy = self.target[0]-robot[0], self.target[1]-robot[1]
             length = math.hypot(dx, dy)
             if length >= c['follow_distance']:
@@ -179,7 +183,7 @@ class Follower(object):
                          self.target[1]-dy/length*c['follow_distance'], math.atan2(dy, dx))
             elif self.mission == 'done' and length >= c['follow_distance']-c['finish_tolerance']:
                 # Already within the final gap tolerance: hold and measure stop;
-                # do not demand new leader motion or reverse after reacquisition.
+                # do not demand new leader motion or reverse to build a trail.
                 point = (robot[0], robot[1], math.atan2(dy, dx))
         if point is None:
             return self.block('waiting_for_target_trail')
@@ -207,7 +211,7 @@ class Follower(object):
             self.client.send_goal(msg, done_cb=self.on_navigation_done)
             self.goal, self.goal_time = point, wall
         self.allowed.publish(True)
-        self.status.publish('following')
+        self.status.publish('following_live_standoff' if live_standoff else 'following')
 
 
 if __name__ == '__main__':

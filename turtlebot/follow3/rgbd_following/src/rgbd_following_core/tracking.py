@@ -29,12 +29,14 @@ class Tracker(object):
         self.reacquire_confirmations = reacquire_confirmations
         self.pending = self.pending_stamp = None
         self.pending_count = 0
+        self.pending_strong = None
         self.reacquired = False
 
     def miss(self, reason='target_lost'):
         self.count = 0
         self.pending = self.pending_stamp = None
         self.pending_count = 0
+        self.pending_strong = None
         self.reason = reason
         return None
 
@@ -57,18 +59,26 @@ class Tracker(object):
         # fresh, appearance-verified observations agree. Two plausible objects
         # remain ambiguous, even when one happens to be nearer.
         if self.locked and self.count == 0:
+            # An impossible remote candidate must not switch the verification
+            # mode of an otherwise recoverable nearby candidate. Filter using
+            # the widest physically reachable range before considering strength.
+            reachable = min(self.identity_radius,
+                            self.jitter + self.speed * (stamp - self.stamp))
+            pairs = [(p, v) for p, v in pairs if distance(p, self.anchor) <= reachable]
             strong = any(v for p, v in pairs)
-            gate = min(self.identity_radius if strong else self.reacquire_radius,
-                       self.jitter + self.speed * (stamp - self.stamp))
-            eligible = [p for p, v in pairs if distance(p, self.anchor) <= gate]
-            trusted = [p for p, v in pairs if (v or not strong) and distance(p, self.anchor) <= gate]
-            if len(eligible) != 1 or len(trusted) != 1:
+            gate = reachable if strong else min(self.reacquire_radius, reachable)
+            # Keep weak competitors inside a widened search region: appearance
+            # strength alone cannot resolve two physically plausible identities.
+            eligible = [(p, v) for p, v in pairs if distance(p, self.anchor) <= gate]
+            if len(eligible) != 1:
                 return self.miss('ambiguous_target' if len(eligible) > 1 else 'target_lost')
-            selected = trusted[0]
-            if (self.pending is None or stamp-self.pending_stamp > self.timeout or
+            selected, strong = eligible[0]
+            if (self.pending is None or self.pending_strong != strong or
+                    stamp-self.pending_stamp > self.timeout or
                     distance(selected, self.pending) > self.jitter+self.speed*(stamp-self.pending_stamp)):
                 self.pending_count = 0
             self.pending, self.pending_stamp = selected, stamp
+            self.pending_strong = strong
             self.pending_count += 1
             self.reason = 'reconfirming_identity'
             if self.pending_count < (self.reacquire_confirmations if strong else self.confirmations):
@@ -77,6 +87,7 @@ class Tracker(object):
             self.count = self.confirmations
             self.pending = self.pending_stamp = None
             self.pending_count = 0
+            self.pending_strong = None
             self.reason, self.reacquired = 'tracking', True
             return selected
         if self.anchor is None:
