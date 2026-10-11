@@ -1,0 +1,135 @@
+{
+  "description": "Same partially occluded development RGB-D frame replayed with identical settings. Baseline disables only the new shared-depth suppression predicate. This is a failure regression, not independent acceptance.",
+  "source_depth_sha256": "897095f34e8a69874093fe77a7d9dcca2237f40265cb436051290b6ef45adadd",
+  "source_rgb_sha256": "529e729d1d30c98ef16812a9e4e716b0a23e8bdce69565d53f8a2bd1f5d1f9a2",
+  "rgb_templates_sha256": "5f93f9f8bf9ec8467d24131ea8ac14fef3fa379d3c245d83597e67601b943276",
+  "original_overlap_only": {
+    "raw_proposals": [
+      {
+        "bbox": [
+          238,
+          300,
+          48,
+          14
+        ],
+        "depth": 1.7320001125335693,
+        "point": [
+          -0.1896952504203433,
+          0.22268572875431605,
+          1.7320001125335693
+        ],
+        "support_samples": 199
+      },
+      {
+        "bbox": [
+          237,
+          291,
+          56,
+          17
+        ],
+        "depth": 1.7320001125335693,
+        "point": [
+          -0.1797981069201515,
+          0.1979428700038365,
+          1.7320001125335693
+        ],
+        "support_samples": 159
+      }
+    ],
+    "selected": [
+      {
+        "bbox": [
+          237,
+          291,
+          56,
+          17
+        ],
+        "depth": 1.7320001125335693,
+        "point": [
+          -0.1797981069201515,
+          0.1979428700038365,
+          1.7320001125335693
+        ],
+        "identity_score": 0.2088378667831421,
+        "identity_verified": false,
+        "structure": "unknown",
+        "private_support_leaked": false
+      },
+      {
+        "bbox": [
+          238,
+          300,
+          48,
+          14
+        ],
+        "depth": 1.7320001125335693,
+        "point": [
+          -0.1896952504203433,
+          0.22268572875431605,
+          1.7320001125335693
+        ],
+        "identity_score": 0.2092624306678772,
+        "identity_verified": false,
+        "structure": "unknown",
+        "private_support_leaked": false
+      }
+    ],
+    "processing_seconds": 0.20243439998012036
+  },
+  "new_shared_support": {
+    "raw_proposals": [
+      {
+        "bbox": [
+          238,
+          300,
+          48,
+          14
+        ],
+        "depth": 1.7320001125335693,
+        "point": [
+          -0.1896952504203433,
+          0.22268572875431605,
+          1.7320001125335693
+        ],
+        "support_samples": 199
+      },
+      {
+        "bbox": [
+          237,
+          291,
+          56,
+          17
+        ],
+        "depth": 1.7320001125335693,
+        "point": [
+          -0.1797981069201515,
+          0.1979428700038365,
+          1.7320001125335693
+        ],
+        "support_samples": 159
+      }
+    ],
+    "selected": [
+      {
+        "bbox": [
+          237,
+          291,
+          56,
+          17
+        ],
+        "depth": 1.7320001125335693,
+        "point": [
+          -0.1797981069201515,
+          0.1979428700038365,
+          1.7320001125335693
+        ],
+        "identity_score": 0.2088378667831421,
+        "identity_verified": false,
+        "structure": "unknown",
+        "private_support_leaked": false
+      }
+    ],
+    "processing_seconds": 0.15267859993036836
+  },
+  "limits": "Surviving box still covers only exposed base pixels; no hidden silhouette, distance or identity evidence is invented. The cone remains in depth/obstacle data."
+}

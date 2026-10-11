@@ -17,6 +17,7 @@ from rgbd_following_core.depth import check_pair
 from rgbd_following_core.motion import fresh
 from rgbd_following_core.settings import validate
 from rgbd_following_core.tracking import Tracker
+from rgbd_following_core.latest_pair import LatestPair
 from rgbd_following_core.vision import intrinsics, metric_depth, observation_clouds, detect, transform_points
 
 
@@ -37,14 +38,52 @@ class Target(object):
         self.clearing = rospy.Publisher('clearing_cloud', PointCloud2, queue_size=1)
         self.status = rospy.Publisher('perception_status', String, queue_size=1)
         self.preview = rospy.Publisher('target_preview', Image, queue_size=1)
+        self.pending_pairs = LatestPair()
         self.inputs = [message_filters.Subscriber('rgb', Image, queue_size=1, buff_size=2**24),
                        message_filters.Subscriber('registered_depth', Image, queue_size=1, buff_size=2**24),
                        message_filters.Subscriber('camera_info', CameraInfo, queue_size=1)]
         self.sync = message_filters.ApproximateTimeSynchronizer(self.inputs, 5, self.config['sync_slop'])
-        self.sync.registerCallback(self.callback)
+        self.sync.registerCallback(self.enqueue_pair)
+        self.detector_worker = threading.Thread(target=self.detect_latest)
+        self.detector_worker.daemon = True
+        self.detector_worker.start()
         self.worker = threading.Thread(target=self.watchdog)
         self.worker.daemon = True
         self.worker.start()
+
+    def enqueue_pair(self, rgb, depth, info):
+        # Keep ATS/subscriber reception short. Never acquire the processing
+        # lock here or renew the last measured observation's freshness.
+        try:
+            stamps = [m.header.stamp.to_sec() for m in (rgb, depth, info)]
+            # Validate before advancing the slot's watermark: one future or
+            # malformed observation must not block every subsequent good pair.
+            check_pair(stamps, rospy.Time.now().to_sec(), self.config['target_timeout'],
+                       self.config['sync_slop'], [m.header.frame_id for m in (rgb, depth, info)],
+                       [(m.width, m.height) for m in (rgb, depth, info)], depth.encoding)
+        except (ValueError, TypeError, AttributeError) as exc:
+            rospy.logwarn_throttle(2, 'Ignoring invalid queued RGB-D pair: '+str(exc))
+            return
+        self.pending_pairs.put((rgb, depth, info), stamps)
+
+    def detect_latest(self):
+        while not rospy.is_shutdown():
+            pair = self.pending_pairs.take()
+            if pair is not None and not rospy.is_shutdown():
+                try:
+                    self.callback(*pair)
+                except Exception as exc:
+                    if rospy.is_shutdown():
+                        return
+                    rospy.logerr_throttle(2, 'RGB-D worker failed this pair: '+str(exc))
+                    with self.lock:
+                        try:
+                            self.reject('perception_worker_error')
+                        except Exception as publish_error:
+                            # reject already clears tracker confirmation before
+                            # publishing; transport failure must not kill this
+                            # receiver permanently. Source freshness still ages.
+                            rospy.logerr_throttle(2, 'RGB-D rejection publish failed: '+str(publish_error))
 
     def reject(self, reason):
         self.tracker.miss(reason)
@@ -95,7 +134,8 @@ class Target(object):
                 if insufficient:
                     return
                 detection_started = self.clock()
-                candidates, mask = detect(image, d, camera, p)
+                diagnostics = {}
+                candidates, mask = detect(image, d, camera, p, diagnostics=diagnostics)
                 detection_seconds = self.clock()-detection_started
                 tf = self.buffer.lookup_transform(self.frame, depth.header.frame_id, depth.header.stamp, rospy.Duration(.05))
                 t, q = tf.transform.translation, tf.transform.rotation
@@ -127,13 +167,29 @@ class Target(object):
                     candidate_verified=[bool(c['identity_verified']) for c in candidates],
                     candidate_sources=[c.get('sources', [c.get('feature', {}).get('kind', 'color')])
                                        for c in candidates],
+                    candidate_structure=[c.get('upper_structure') for c in candidates],
+                    rejected_candidates=diagnostics.get('rejected_candidates', []),
                     identity_scores=[c['identity_score'] for c in candidates]))))
                 view = image.copy()
+                for rejected in diagnostics.get('rejected_candidates', []):
+                    x, y, w, h = rejected['bbox']
+                    cv2.rectangle(view, (x, y), (x+w, y+h), (80, 80, 220), 1)
+                    cv2.putText(view, 'not target', (x, max(12, y-3)),
+                                cv2.FONT_HERSHEY_SIMPLEX, .35, (80, 80, 220), 1)
                 for index, candidate in enumerate(candidates):
                     x, y, w, h = candidate['bbox']
                     # Yellow means a candidate, not a confirmed followed robot.
                     color = (0, 230, 0) if index == selected_index else (0, 200, 255)
                     cv2.rectangle(view, (x, y), (x+w, y+h), color, 2)
+                    support_box = candidate.get('upper_structure', {}).get('support_bbox')
+                    if support_box:
+                        sx, sy, sw, sh = [int(v) for v in support_box]
+                        cv2.rectangle(view, (sx, sy), (sx+sw, sy+sh), (255, 220, 0), 1)
+                    if index == selected_index:
+                        px, py, pz = candidate['point']
+                        u, v = int(round(camera[0]*px/pz+camera[2])), int(round(camera[1]*py/pz+camera[3]))
+                        cv2.line(view, (u-5, v), (u+5, v), color, 2)
+                        cv2.line(view, (u, v-5), (u, v+5), color, 2)
                 cv2.putText(view, self.tracker.reason, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, .6, (0, 255, 255), 1)
                 cv2.putText(view, 'detect %.0f ms | age %.0f ms' %
                             (detection_seconds*1000., (rospy.Time.now().to_sec()-min(stamps))*1000.),

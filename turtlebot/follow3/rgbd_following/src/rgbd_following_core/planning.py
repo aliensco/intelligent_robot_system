@@ -5,6 +5,53 @@ import cv2
 import numpy as np
 
 
+def _approach_angle(path, target, horizon, window=.10):
+    """Largest local path/target bearing difference over a measured route.
+
+    A single start/end chord hides turns in an S-shaped approach. Sliding short
+    chords smooth grid stair steps while retaining those turns. Target bearing
+    is evaluated at each chord's midpoint, since translating near the leader
+    also changes its bearing. This is a ranking cost, not camera visibility or
+    occlusion proof; the independent camera/velocity checks still apply.
+    """
+    if len(path) < 2:
+        return 0.
+    samples = [(path[0][0], path[0][1], 0.)]
+    for point in path[1:]:
+        previous = samples[-1]
+        segment = math.hypot(point[0]-previous[0], point[1]-previous[1])
+        if segment <= 1e-9:
+            continue
+        used = min(segment, horizon-previous[2])
+        fraction = used/segment
+        samples.append((previous[0]+fraction*(point[0]-previous[0]),
+                        previous[1]+fraction*(point[1]-previous[1]),
+                        previous[2]+used))
+        if samples[-1][2] >= horizon:
+            break
+    total = samples[-1][2]
+    if total <= 1e-9:
+        return 0.
+    worst, start = 0., 0
+    for end in range(1, len(samples)):
+        b = samples[end]
+        if b[2]+1e-9 < min(window, total):
+            continue
+        begin = max(0., b[2]-window)
+        while start+1 < end and samples[start+1][2] < begin:
+            start += 1
+        a, after = samples[start], samples[start+1]
+        fraction = (begin-a[2])/(after[2]-a[2])
+        ax, ay = a[0]+fraction*(after[0]-a[0]), a[1]+fraction*(after[1]-a[1])
+        if math.hypot(b[0]-ax, b[1]-ay) <= 1e-9:
+            continue
+        direction = math.atan2(b[1]-ay, b[0]-ax)
+        bearing = math.atan2(target[1]-(ay+b[1])/2., target[0]-(ax+b[0])/2.)
+        turn = direction-bearing
+        worst = max(worst, abs(math.atan2(math.sin(turn), math.cos(turn))))
+    return worst
+
+
 def reachable_standoff(grid, robot, target, desired, minimum, radius,
                       extra_distance=0., excluded=None, path_cost_weight=.25,
                       heading_cost_weight=.8, max_expansions=12000, path_lookahead=.30):
@@ -21,8 +68,10 @@ def reachable_standoff(grid, robot, target, desired, minimum, radius,
     inflation, not extra footprint padding. Normal and farther endpoints compete
     with a gap-error penalty, allowing an easy forward detour to beat a nominal
     gap that requires first turning away. ``heading_cost_weight`` penalizes the
-    heading to the first 0.25 m of the reconstructed approach, rather than just
-    one grid step. It does not prohibit a necessary turn away.
+    largest local heading/target-bearing difference along the first 0.25 m
+    (or longer ``path_lookahead``) of the reconstructed approach. Short sliding
+    chords retain turns hidden by the whole prefix's start/end direction.
+    This soft cost does not prohibit a necessary turn away or prove visibility.
     ``excluded`` accepts one point or a sequence of recently
     failed/visited points; their lifetime is managed by the caller.
     The route-cost search is bounded by ``max_expansions`` to keep the live
@@ -124,27 +173,23 @@ def reachable_standoff(grid, robot, target, desired, minimum, radius,
     settled = []
 
     def approach_penalty(index):
+        if not heading_cost_weight:
+            return 0.
         route = []
         while index != seed_index:
             route.append(index)
             index = parents[index]
-        previous = seed_index
+        path = [(robot[0], robot[1])]
         length = 0.
-        dx = dy = 0.
+        horizon = max(.25, path_lookahead)
         for index in reversed(route):
-            px, py = previous % width, previous // width
-            nx, ny = index % width, index // width
-            segment = resolution*math.hypot(nx-px, ny-py)
-            fraction = min(1., (.25-length)/segment)
-            dx, dy = (px-seed[0]+fraction*(nx-px))*resolution, (py-seed[1]+fraction*(ny-py))*resolution
-            length += segment
-            if length >= .25:
+            gx, gy = (index % width+.5)*resolution, (index // width+.5)*resolution
+            point = (grid.origin[0]+c*gx-s*gy, grid.origin[1]+s*gx+c*gy)
+            length += math.hypot(point[0]-path[-1][0], point[1]-path[-1][1])
+            path.append(point)
+            if length >= horizon:
                 break
-            previous = index
-        if not route:
-            return 0.
-        turn = math.atan2(dy, dx)+grid.origin[2]-heading
-        return heading_cost_weight*abs(math.atan2(math.sin(turn), math.cos(turn)))
+        return heading_cost_weight*_approach_angle(path, target, horizon)
 
     def route_waypoint(index, point, detour):
         if not path_lookahead:

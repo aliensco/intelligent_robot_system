@@ -1,0 +1,75 @@
+{
+  "camera": [
+    525.0,
+    525.0,
+    99.5,
+    -35.5
+  ],
+  "crop_xywh": [
+    220,
+    275,
+    105,
+    55
+  ],
+  "description": "Visually reviewed development frame: two vertically offset RGB proposals cover the same exposed front-robot base behind a closer cone. Only a tiny depth crop is retained.",
+  "floor_plane": [
+    [
+      0.0009982395982616832,
+      -0.9998985964199638,
+      -0.01420564659180068
+    ],
+    0.3008505104658852
+  ],
+  "limitations": "A single development-frame regression, not identification or obstacle-avoidance acceptance. No RGB image pixels retained.",
+  "proposals": [
+    {
+      "bbox": [
+        18,
+        25,
+        48,
+        14
+      ],
+      "correlation": 0.7907384037971497,
+      "depth": 1.7320001125335693,
+      "identity_score": 0.20926159620285034,
+      "identity_verified": false,
+      "kind": "rgb_template_v1",
+      "metric_width": 0.1583542960030692,
+      "point": [
+        -0.1896952504203433,
+        0.22268572875431605,
+        1.7320001125335693
+      ],
+      "size_error": 0.638947572244363,
+      "sources": null
+    },
+    {
+      "bbox": [
+        17,
+        16,
+        56,
+        17
+      ],
+      "correlation": 0.7911621332168579,
+      "depth": 1.7320001125335693,
+      "identity_score": 0.2088378667831421,
+      "identity_verified": false,
+      "kind": "rgb_template_v1",
+      "metric_width": 0.18474667867024738,
+      "point": [
+        -0.1797981069201515,
+        0.1979428700038365,
+        1.7320001125335693
+      ],
+      "size_error": 0.4847968924171049,
+      "sources": null
+    }
+  ],
+  "reference_width_m": 0.3,
+  "source_depth_sha256": "897095f34e8a69874093fe77a7d9dcca2237f40265cb436051290b6ef45adadd",
+  "source_rgb_sha256": "529e729d1d30c98ef16812a9e4e716b0a23e8bdce69565d53f8a2bd1f5d1f9a2",
+  "source_stamps": [
+    1791715775.8934371,
+    1791715775.8918002
+  ]
+}

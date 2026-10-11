@@ -85,6 +85,7 @@ class VisionPipelineTests(unittest.TestCase):
         self.c['perception']['identity']['references'] = [first,second]
         self.assertTrue(self.detect()[0]['identity_verified'])
 
+    @unittest.skipIf(sys.version_info[0] < 3, 'Offline tool test harness uses Python 3 importlib/tempfile')
     def test_enrollment_and_heldout_evaluation_preserve_calibration_boundary(self):
         import importlib.util
         import tempfile
@@ -133,6 +134,28 @@ class VisionPipelineTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.validate(bad)
 
+    def test_upper_structure_requires_boolean_mode_and_finite_metric_width(self):
+        for structure in (None, {'enabled': 'true'}, {'enabled': True},
+                          {'enabled': True, 'reference_width_m': float('nan')},
+                          {'enabled': True, 'reference_width_m': .01}):
+            bad = copy.deepcopy(self.c)
+            bad['perception']['upper_structure'] = structure
+            with self.assertRaises((ValueError, KeyError)):
+                self.validate(bad)
+        self.c['perception']['upper_structure'] = {'enabled': True, 'reference_width_m': .30}
+        self.validate(self.c)
+
+    def test_template_metric_scale_bounds_are_finite_ordered_ratios(self):
+        template = dict(label='test', pixels=[[0]*8 for unused in range(8)],
+                        aspect=1., width_m=.3, metric_width_ratio=[.8, 1.2])
+        self.c['perception']['rgb_templates'] = [template]
+        self.validate(self.c)
+        for ratio in ([1.2, .8], [.8, float('nan')], [True, 1.2], [0., 1.2], [1.]):
+            template['metric_width_ratio'] = ratio
+            with self.assertRaises(ValueError):
+                self.validate(self.c)
+
+    @unittest.skipIf(sys.version_info[0] < 3, 'Color calibration is a Python 3 offline tool')
     def test_color_calibration_handles_red_hue_wrap(self):
         import importlib.util
         spec = importlib.util.spec_from_file_location('calibration_test', os.path.join(ROOT, 'tools/calibrate_rgbd_target.py'))

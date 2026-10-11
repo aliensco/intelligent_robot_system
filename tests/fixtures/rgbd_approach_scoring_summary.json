@@ -1,0 +1,52 @@
+{
+  "purpose": "Offline evidence for sliding local path-heading scoring; not physical following or visibility acceptance.",
+  "capture_source_stamp": 1791715898.6141286,
+  "source_files": [
+    ".tools/field-follow-fix/obstacle_evidence.npz",
+    ".tools/field-follow-fix/obstacle_evidence_metadata.json",
+    ".tools/field-follow-fix/planning_mount_capture.json",
+    ".tools/field-follow-fix/sideways_181438_frames.json",
+    ".tools/field-follow-fix/sliding_approach_replay.json"
+  ],
+  "capture_pose_method": "Compose captured odom<-optical transform with inverse static base<-optical mount; do not substitute a later live odometry pose.",
+  "settings": {
+    "desired_gap_m": 0.6,
+    "minimum_gap_m": 0.5,
+    "footprint_radius_m": 0.25,
+    "extra_gap_m": 0.6,
+    "path_lookahead_m": 0.3,
+    "heading_cost_weight": 0.8,
+    "sliding_path_window_m": 0.1
+  },
+  "current_capture": {
+    "old_goal_target_bearing_degrees": -20.8322,
+    "new_goal_target_bearing_degrees": -37.6035,
+    "old_route_sliding_peak_degrees": 47.4812,
+    "new_route_sliding_peak_degrees": 48.2610,
+    "old_runtime_p50_ms": 48.455,
+    "new_runtime_p50_ms": 49.186,
+    "map_unchanged": true,
+    "conclusion": "Both actual grid paths initially travel diagonally; the changed endpoint does not demonstrate improved camera visibility. The new route peak is slightly larger. Do not claim this replay solves the observed loss of view."
+  },
+  "prior_sideways_scene": {
+    "session": "20261011_181438_51648",
+    "relative_times_s": [15.4412, 25.4573, 49.4461],
+    "old_and_new_goal_target_bearing_degrees": [74.3156, 74.5663, 79.1143],
+    "map_unchanged": true,
+    "conclusion": "The selected goals remain unchanged. Footprint checks show no forward 0.25-0.30 m corridor in these frames; scoring cannot create missing traversable geometry."
+  },
+  "larger_grid_benchmark": {
+    "method": "Embed the unchanged 200x200 capture in a 400x400 unknown exterior at the same resolution and physical origin.",
+    "old_runtime_p50_ms": 85.557,
+    "new_runtime_p50_ms": 84.384,
+    "new_runtime_p95_ms": 95.228,
+    "platform": "Local Windows Python3, not ROS Kinetic VM; 8 repetitions per variant."
+  },
+  "verified_scope": [
+    "Synthetic dogleg turns no longer cancel in a whole-prefix start/end chord.",
+    "Local target bearing changes with translation are included in the soft cost.",
+    "24 planning tests and 36 node adapter tests pass.",
+    "Collision geometry and costmap values are unchanged, including the target robot and foreground obstacles.",
+    "No robot motion or runtime deployment was performed by this review."
+  ]
+}

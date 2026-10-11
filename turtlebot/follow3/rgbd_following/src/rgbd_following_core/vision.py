@@ -73,18 +73,31 @@ def transform_points(points, translation, quaternion):
     return np.asarray(points).reshape((-1, 3)).dot(rotation.T) + t
 
 
-def detect(rgb, depth_m, camera, config):
+def detect(rgb, depth_m, camera, config, diagnostics=None):
     """Return independent candidates; tracker handles association and ambiguity."""
     if rgb.shape[:2] != depth_m.shape:
         raise ValueError('registered_size_mismatch')
     if config.get('proposal_mode', 'color') == 'depth_body':
         from .body import detect_body
-        candidates, mask = detect_body(rgb, depth_m, camera, config)
+        structure = config.get('upper_structure', {})
+        enabled = structure.get('enabled', False)
+        plane = False
+        if enabled:
+            from .body import floor_plane_for_depth
+            plane = floor_plane_for_depth(depth_m, camera, config)
+        candidates, mask = detect_body(rgb, depth_m, camera, config, plane)
         if config.get('rgb_templates'):
             from .rgb_templates import detect_templates
-            visual, visual_mask = detect_templates(rgb, depth_m, camera, config)
-            return fuse_body_templates(candidates, visual, depth_m,
-                                       config['min_depth_samples']), mask | visual_mask
+            visual, visual_mask = detect_templates(rgb, depth_m, camera, config, plane)
+            candidates = fuse_body_templates(candidates, visual, depth_m,
+                                             config['min_depth_samples'])
+            mask |= visual_mask
+        if enabled:
+            from .structure import filter_upper_structure
+            candidates = filter_upper_structure(candidates, depth_m, camera, plane,
+                structure['reference_width_m'], diagnostics,
+                min_depth=config['min_depth'],
+                max_depth=config.get('clearing_max_depth', config['max_depth']))
         return candidates, mask
     hsv = cv2.cvtColor(rgb, cv2.COLOR_BGR2HSV)
     mask = np.zeros(depth_m.shape, dtype=np.uint8)

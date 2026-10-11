@@ -52,9 +52,22 @@ def validate(config, execute=False):
         if not config['minimum_distance'] < config['standoff_min_distance'] <= config['follow_distance']:
             raise ValueError('Standoff minimum must exceed stop distance and not exceed desired gap')
     templates = p.get('rgb_templates', [])
+    structure = p.get('upper_structure', {})
+    if (not isinstance(structure, dict) or
+            not isinstance(structure.get('enabled', False), bool)):
+        raise ValueError('Invalid upper structure configuration')
+    if structure.get('enabled', False):
+        positive(structure, ('reference_width_m',))
+        if not .1 <= structure['reference_width_m'] <= .8:
+            raise ValueError('Invalid upper structure reference width')
     if not isinstance(templates, list) or len(templates) > 8:
         raise ValueError('Expected up to eight fixed RGB templates')
     for template in templates:
+        ratios = template.get('metric_width_ratio', [.5, 1.8])
+        if (not isinstance(ratios, (list, tuple)) or len(ratios) != 2 or
+                any(isinstance(v, bool) or not isinstance(v, (int, float)) or not finite(v)
+                    for v in ratios) or not 0 < ratios[0] <= ratios[1] <= 3):
+            raise ValueError('Invalid template metric width ratios')
         pixels = template.get('pixels', [])
         if (not 8 <= len(pixels) <= 64 or not isinstance(pixels[0], list) or
                 not 8 <= len(pixels[0]) <= 64 or

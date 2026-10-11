@@ -16,6 +16,32 @@ CAMERA_STREAMS = (('registered_depth', '/camera/depth_registered/hw_registered/i
                   ('rectified_rgb', '/camera/rgb/image_rect_color'))
 
 
+def field_paths(tools_dir=None, environ=None, user_home=None):
+    """Portable bundle defaults, with automatic compatibility for old installs."""
+    environ = os.environ if environ is None else environ
+    user_home = os.path.expanduser('~') if user_home is None else user_home
+    tools_dir = os.path.dirname(os.path.abspath(__file__)) if tools_dir is None else tools_dir
+    bundle = os.path.dirname(os.path.abspath(tools_dir))
+    workspace = os.path.join(bundle, 'workspace')
+    runtime = os.path.join(bundle, 'runtime')
+    legacy_workspace = os.path.join(user_home, 'codex_method3_ws')
+    if (not environ.get('METHOD3_WORKSPACE') and
+            not os.path.isfile(os.path.join(workspace, 'devel', 'setup.bash')) and
+            os.path.isfile(os.path.join(legacy_workspace, 'devel', 'setup.bash'))):
+        workspace = legacy_workspace
+        runtime = os.path.join(user_home, 'codex_method3_runtime')
+
+    def absolute(value):
+        if value == '~':
+            value = user_home
+        elif value.startswith('~/'):
+            value = os.path.join(user_home, value[2:])
+        return os.path.abspath(os.path.expanduser(value))
+
+    return (absolute(environ.get('METHOD3_WORKSPACE') or workspace),
+            absolute(environ.get('METHOD3_RUNTIME') or runtime))
+
+
 def wait_for_fresh_message(ros, topic, message_type, timeout, max_age=.5):
     """A live publisher/receipt does not prove that source frames are advancing."""
     deadline = time.time()+timeout
@@ -123,7 +149,8 @@ def prepare_field_launch(source_path, logdir, namespace, max_speed, max_turn,
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument('--runtime', default=os.path.expanduser('~/codex_method3_runtime'))
+    p.add_argument('--runtime', default=field_paths()[1],
+                   help='Runtime launch/configuration directory (default: METHOD3_RUNTIME or bundle runtime)')
     p.add_argument('--duration', type=float, default=300.)
     p.add_argument('--distance', type=float, default=5.)
     p.add_argument('--max-speed', type=float, default=.10,
@@ -141,6 +168,7 @@ def main():
     p.add_argument('--shutdown-stack', action='store_true',
                    help='Also close stack/viewer started by this session; default keeps them stationary for next test')
     args = p.parse_args()
+    args.runtime = os.path.abspath(os.path.expanduser(args.runtime))
     if args.allow_unobserved and args.confirm_clearance:
         p.error('Choose unknown-cell field policy or explicit clearance, not both')
     if not (0 < args.duration <= 300 and 0 < args.distance <= 5):

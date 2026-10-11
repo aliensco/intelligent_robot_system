@@ -1,0 +1,89 @@
+{
+  "source_stamp": 1791715898.6141286,
+  "cloud_stamp": 1791715898.6141286,
+  "map_stamp": 1791715898.6862264,
+  "detection_reason": "tracking",
+  "regions": {
+    "cone_visible_surface": {
+      "roi": [
+        294,
+        280,
+        48,
+        99
+      ],
+      "cloud_points": 265,
+      "height_eligible_points": 265,
+      "height_range_m": [
+        0.08059795475317064,
+        0.24512969679836696
+      ],
+      "median_depth_m": 0.9030000567436218,
+      "map_values_at_eligible_endpoints": [
+        100
+      ],
+      "lethal_endpoint_count": 265,
+      "unknown_endpoint_count": 0
+    },
+    "front_robot_visible_base": {
+      "roi": [
+        237,
+        290,
+        44,
+        20
+      ],
+      "cloud_points": 13,
+      "height_eligible_points": 13,
+      "height_range_m": [
+        0.11587035981521956,
+        0.1644817571508147
+      ],
+      "median_depth_m": 1.7320001125335693,
+      "map_values_at_eligible_endpoints": [
+        100
+      ],
+      "lethal_endpoint_count": 13,
+      "unknown_endpoint_count": 0
+    },
+    "background_partition": {
+      "roi": [
+        410,
+        239,
+        106,
+        48
+      ],
+      "cloud_points": 318,
+      "height_eligible_points": 318,
+      "height_range_m": [
+        0.17840763127223302,
+        0.37791208793929865
+      ],
+      "median_depth_m": 2.2660000324249268,
+      "map_values_at_eligible_endpoints": [
+        -2,
+        100
+      ],
+      "lethal_endpoint_count": 43,
+      "unknown_endpoint_count": 0
+    },
+    "floor": {
+      "roi": [
+        105,
+        354,
+        83,
+        65
+      ],
+      "cloud_points": 319,
+      "height_eligible_points": 1,
+      "height_range_m": [
+        0.016739094322081094,
+        0.04054871365244708
+      ],
+      "median_depth_m": 1.0110000371932983,
+      "map_values_at_eligible_endpoints": [
+        100
+      ],
+      "lethal_endpoint_count": 1,
+      "unknown_endpoint_count": 0
+    }
+  }
+}

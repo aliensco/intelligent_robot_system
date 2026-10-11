@@ -75,7 +75,20 @@ def body_feature(hsv, support, bbox, depth, camera):
                 aspect=float(w)/h, width_m=w*depth/camera[0], height_m=h*depth/camera[1])
 
 
-def detect_body(rgb, depth, camera, config):
+def floor_plane_for_depth(depth, camera, config):
+    """Fit one ground plane for all identity branches of the same RGB-D pair."""
+    fx, fy, cx, cy = camera
+    rows, cols = np.mgrid[0:depth.shape[0]:4, 0:depth.shape[1]:4]
+    z = depth[::4, ::4]
+    finite = np.isfinite(z)
+    safe = np.where(finite, z, 0.)
+    valid = finite & (safe >= config['min_depth']) & (safe <= config['max_depth'])
+    safe = np.where(valid, safe, 0.)
+    points = np.stack(((cols-cx)*safe/fx, (rows-cy)*safe/fy, safe), axis=-1)
+    return floor_plane(points, valid, rows)
+
+
+def detect_body(rgb, depth, camera, config, plane=False):
     options = config['body']
     stride = 4
     rows, cols = np.mgrid[0:depth.shape[0]:stride, 0:depth.shape[1]:stride]
@@ -85,7 +98,8 @@ def detect_body(rgb, depth, camera, config):
     valid = finite & (safe_z >= config['min_depth']) & (safe_z <= config['max_depth'])
     fx, fy, cx, cy = camera
     points = np.stack(((cols-cx)*safe_z/fx, (rows-cy)*safe_z/fy, safe_z), axis=-1)
-    plane = floor_plane(points, valid, rows)
+    if plane is False:
+        plane = floor_plane(points, valid, rows)
     empty = np.zeros(depth.shape, dtype=np.uint8)
     if plane is None:
         return [], empty

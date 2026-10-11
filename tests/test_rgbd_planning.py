@@ -6,10 +6,49 @@ import unittest
 import json
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../turtlebot/follow3/rgbd_following/src'))
 from rgbd_following_core.motion import Grid
-from rgbd_following_core.planning import reachable_standoff
+from rgbd_following_core.planning import reachable_standoff, _approach_angle
 
 
 class PlanningTests(unittest.TestCase):
+    def test_sideways_turns_cannot_cancel_in_a_forward_approach_chord(self):
+        # A dogleg corridor turns out and back before advancing. Its position
+        # after 25 cm is directly ahead, concealing both lateral turns from
+        # the old whole-prefix chord score. A gentle alternative should win.
+        gentle = [(0., 0.), (.30, .10)]
+        gentle_angle = _approach_angle(gentle, (2., 0.), .30)
+        for side in (-1., 1.):
+            dogleg = [(0., 0.), (0., .10*side), (.04, .10*side),
+                      (.04, 0.), (.34, 0.)]
+            angle = _approach_angle(dogleg, (2., 0.), .30)
+            self.assertGreater(angle, math.radians(85.))
+            self.assertGreater(angle, gentle_angle)
+        self.assertLess(gentle_angle, math.radians(25.))
+
+    def test_approach_uses_target_bearing_at_the_local_segment(self):
+        path = [(0., 0.), (.10, .10), (.20, .20), (.30, .30)]
+        # Both targets start straight ahead, but translation shifts the nearer
+        # one toward the image edge much faster. Initial bearing alone misses it.
+        near = _approach_angle(path, (.60, 0.), .45)
+        far = _approach_angle(path, (3., 0.), .45)
+        self.assertGreater(near, far+math.radians(25.))
+        self.assertGreater(near, math.radians(75.))
+
+    def test_approach_cost_is_limited_to_the_subgoal_horizon(self):
+        path = [(0., 0.), (.40, 0.), (.40, .50)]
+        self.assertAlmostEqual(_approach_angle(path, (2., 0.), .30), 0.)
+        self.assertGreater(_approach_angle(path, (2., 0.), .60), math.radians(80.))
+        self.assertAlmostEqual(_approach_angle([(0., 0.), (.04, 0.)], (2., 0.), .30), 0.)
+        self.assertAlmostEqual(_approach_angle([(0., 0.), (0., 0.)], (2., 0.), .30), 0.)
+
+    def test_approach_cost_does_not_depend_on_world_frame_heading(self):
+        path, target = [(0., 0.), (.10, .08), (.25, .10)], (1., .05)
+        angle = _approach_angle(path, target, .30)
+        c, s = math.cos(1.2), math.sin(1.2)
+        def transform(point):
+            return 2.+c*point[0]-s*point[1], -3.+s*point[0]+c*point[1]
+        self.assertAlmostEqual(_approach_angle([transform(p) for p in path],
+                                               transform(target), .30), angle)
+
     def test_recorded_cone_failure_has_reachable_detour(self):
         with open(os.path.join(os.path.dirname(__file__), 'fixtures/rgbd_cone_standoff.json')) as source:
             fixture = json.load(source)

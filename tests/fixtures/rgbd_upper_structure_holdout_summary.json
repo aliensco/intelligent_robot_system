@@ -1,0 +1,117 @@
+{
+  "baseline_summary": {
+    "blue_cone_base": 0,
+    "candidate_counts": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "front_turtlebot_base": 12,
+    "unmatched_candidates": 0
+  },
+  "conclusion": "Same static arrangement, 12 separately captured frames: no observed loss of existing front-robot proposals. Baseline already produced no cone proposal, so this sequence does NOT demonstrate 12-frame cone false-positive removal. It also does not demonstrate full-base boxes, stable center correction, cross-scene generalization or moving obstacle avoidance.",
+  "description": "Held-out 12 captured RGB-D frames of the same static arrangement. Algorithm was frozen before evaluation. ROI labels reviewed independently from the 12-frame contact sheet; not cross-scene accuracy.",
+  "enabled_summary": {
+    "blue_cone_base": 0,
+    "candidate_counts": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "front_turtlebot_base": 12,
+    "unmatched_candidates": 0
+  },
+  "frame_stamps": [
+    [
+      1791714322.1298797,
+      1791714322.1292958
+    ],
+    [
+      1791714322.5591905,
+      1791714322.5616028
+    ],
+    [
+      1791714322.9593656,
+      1791714322.963474
+    ],
+    [
+      1791714323.3932805,
+      1791714323.3967593
+    ],
+    [
+      1791714323.8251626,
+      1791714323.8291771
+    ],
+    [
+      1791714324.2571654,
+      1791714324.2646174
+    ],
+    [
+      1791714324.6575758,
+      1791714324.6636262
+    ],
+    [
+      1791714325.0918198,
+      1791714325.0972538
+    ],
+    [
+      1791714325.5232725,
+      1791714325.532121
+    ],
+    [
+      1791714325.9248276,
+      1791714325.9312387
+    ],
+    [
+      1791714326.3551235,
+      1791714326.365884
+    ],
+    [
+      1791714326.787233,
+      1791714326.7992659
+    ]
+  ],
+  "manual_base_regions_xywh": {
+    "blue_cone_base": [
+      399,
+      389,
+      156,
+      57
+    ],
+    "front_turtlebot_base": [
+      335,
+      274,
+      109,
+      52
+    ]
+  },
+  "raw_data_policy": "The full RGB-D sequence and per-frame diagnostics remain local under .tools/field-follow-fix. Only this non-image provenance summary is retained; the separately captured development-frame depth crop is the portable regression fixture.",
+  "source_sha256": "e53cfbd56325fb9a3ce67fbb02026b0205ffaf40e033e75fb4101434168cdd93",
+  "structure_sha256": "654a22784f4b2720f77ebcc3bbd523844e5245b995dddcb59f53d62360ca5445",
+  "structure_states": {
+    "supported": 2,
+    "unknown": 10
+  },
+  "upper_structure": {
+    "enabled": true,
+    "reference_width_m": 0.3
+  }
+}

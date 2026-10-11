@@ -1,0 +1,674 @@
+{
+  "comparisons": {
+    "angle30_independent_view": {
+      "description": "Twelve separately captured frames after a user-reported 30-degree leader rotation. No template was enrolled or tuned from these frames.",
+      "limitations": "One new static angle, not broad accuracy, continuous motion or navigation acceptance. Extent means coverage of the manually reviewed visible base, not an unseen full object. Timings are local Python/OpenCV replay, not VM ROS runtime.",
+      "manual_candidate_regions_xywh": {
+        "blue_cone_base": [
+          399,
+          390,
+          156,
+          58
+        ],
+        "front_turtlebot_base": [
+          350,
+          275,
+          108,
+          52
+        ]
+      },
+      "manual_visible_base_xywh": [
+        354,
+        281,
+        100,
+        42
+      ],
+      "module_sha256": {
+        "body.py": "721bfb18203b3e50736945c7d52c6cc37aed5bf523670518fcc456850c11b583",
+        "rgb_templates.py": "c327af2b7f0e87bd05df2a41f08cd6ab880a9861d691d9b32cb59ad6b9f38279",
+        "structure.py": "3bfd9147635637e0eaf148609190274f6aa519acff8751cc9c096f819e2cd904",
+        "vision.py": "4df2fc3b080292c482ceece7dac63f94428b3b338dd3889955a0d9104103d205"
+      },
+      "source_sha256": "1de8d89555a370fd1869beffe4a1f99219e1c718b55f3232c536bc625b1b3210",
+      "summary": {
+        "both_default_ratio": {
+          "candidate_counts": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "center_x_range_m": [
+            0.26227430275508334,
+            0.2636371513775417
+          ],
+          "cone_candidates": 0,
+          "frames_with_target": 12,
+          "max_adjacent_center_x_jump_m": 0.0013628486224583347,
+          "processing_ms_max": 252.78600002638996,
+          "processing_ms_p50": 232.53570002270862,
+          "target_boxes": [
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ]
+          ],
+          "target_extents": {
+            "main_visible_base": 12
+          },
+          "unmatched_candidates": 0
+        },
+        "both_metric_ratio": {
+          "candidate_counts": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "center_x_range_m": [
+            0.26227430275508334,
+            0.2636371513775417
+          ],
+          "cone_candidates": 0,
+          "frames_with_target": 12,
+          "max_adjacent_center_x_jump_m": 0.0013628486224583347,
+          "processing_ms_max": 226.10019997227937,
+          "processing_ms_p50": 200.28424996417016,
+          "target_boxes": [
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ]
+          ],
+          "target_extents": {
+            "main_visible_base": 12
+          },
+          "unmatched_candidates": 0
+        },
+        "old": {
+          "candidate_counts": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "center_x_range_m": [
+            0.26227430275508334,
+            0.2636371513775417
+          ],
+          "cone_candidates": 0,
+          "frames_with_target": 12,
+          "max_adjacent_center_x_jump_m": 0.0013628486224583347,
+          "processing_ms_max": 212.8507000161335,
+          "processing_ms_p50": 163.62965002190322,
+          "target_boxes": [
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ],
+            [
+              355,
+              291,
+              88,
+              27
+            ]
+          ],
+          "target_extents": {
+            "main_visible_base": 12
+          },
+          "unmatched_candidates": 0
+        }
+      },
+      "template_settings": {
+        "both_default_ratio": [
+          {
+            "aspect": 3.3125,
+            "label": "visually_reviewed_current_front_kobuki_20261011",
+            "min_correlation": 0.78,
+            "verified_correlation": 0.9,
+            "width_m": 0.3
+          },
+          {
+            "aspect": 2.8285714285714287,
+            "label": "reviewed_complete_front_base_20261011_far",
+            "min_correlation": 0.78,
+            "verified_correlation": 0.9,
+            "width_m": 0.33678857142857144
+          }
+        ],
+        "both_metric_ratio": [
+          {
+            "aspect": 3.3125,
+            "label": "visually_reviewed_current_front_kobuki_20261011",
+            "min_correlation": 0.78,
+            "verified_correlation": 0.9,
+            "width_m": 0.3
+          },
+          {
+            "aspect": 2.8285714285714287,
+            "label": "reviewed_complete_front_base_20261011_far",
+            "metric_width_ratio": [
+              0.8,
+              1.2
+            ],
+            "min_correlation": 0.78,
+            "verified_correlation": 0.9,
+            "width_m": 0.33678857142857144
+          }
+        ],
+        "old": [
+          {
+            "aspect": 3.3125,
+            "label": "visually_reviewed_current_front_kobuki_20261011",
+            "min_correlation": 0.78,
+            "verified_correlation": 0.9,
+            "width_m": 0.3
+          }
+        ]
+      }
+    },
+    "frontal_regression": {
+      "description": "Frontal regression sequence captured before full-base template enrollment. Already inspected to diagnose center jumps, so this is not blind validation. Full-base reference enrolled only from the separate new_failure development frame.",
+      "limitations": "12 frames of one static view; no claims about broad detection accuracy or navigation. Local replay timings are not ROS VM performance.",
+      "manual_candidate_regions_xywh": {
+        "blue_cone_base": [
+          399,
+          389,
+          156,
+          57
+        ],
+        "front_turtlebot_base": [
+          335,
+          274,
+          109,
+          52
+        ]
+      },
+      "manual_visible_base_xywh": [
+        342,
+        280,
+        98,
+        41
+      ],
+      "module_sha256": {
+        "body.py": "721bfb18203b3e50736945c7d52c6cc37aed5bf523670518fcc456850c11b583",
+        "rgb_templates.py": "c327af2b7f0e87bd05df2a41f08cd6ab880a9861d691d9b32cb59ad6b9f38279",
+        "structure.py": "3bfd9147635637e0eaf148609190274f6aa519acff8751cc9c096f819e2cd904",
+        "vision.py": "4df2fc3b080292c482ceece7dac63f94428b3b338dd3889955a0d9104103d205"
+      },
+      "source_sha256": "e53cfbd56325fb9a3ce67fbb02026b0205ffaf40e033e75fb4101434168cdd93",
+      "summary": {
+        "both_metric_ratio": {
+          "boxes": [
+            [
+              338,
+              283,
+              104,
+              37
+            ],
+            [
+              337,
+              286,
+              104,
+              37
+            ],
+            [
+              337,
+              288,
+              104,
+              37
+            ],
+            [
+              337,
+              288,
+              104,
+              37
+            ],
+            [
+              337,
+              288,
+              104,
+              37
+            ],
+            [
+              337,
+              287,
+              104,
+              37
+            ],
+            [
+              338,
+              287,
+              104,
+              37
+            ],
+            [
+              337,
+              288,
+              104,
+              37
+            ],
+            [
+              337,
+              288,
+              104,
+              37
+            ],
+            [
+              337,
+              288,
+              104,
+              37
+            ],
+            [
+              337,
+              288,
+              104,
+              37
+            ],
+            [
+              337,
+              287,
+              104,
+              37
+            ]
+          ],
+          "candidate_counts": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "center_x_range_m": [
+            0.22808653809343066,
+            0.2474057333809989
+          ],
+          "cone_candidates": 0,
+          "frames_with_target": 12,
+          "max_adjacent_center_x_jump_m": 0.015507765037672872,
+          "processing_ms_max": 192.33559991698712,
+          "processing_ms_p50": 184.7628999967128,
+          "structure_states": {
+            "supported": 2,
+            "unknown": 10
+          },
+          "target_extents": {
+            "main_visible_base": 12
+          },
+          "unmatched_candidates": 0
+        },
+        "old": {
+          "boxes": [
+            [
+              342,
+              296,
+              48,
+              14
+            ],
+            [
+              341,
+              299,
+              48,
+              14
+            ],
+            [
+              341,
+              301,
+              48,
+              14
+            ],
+            [
+              341,
+              301,
+              48,
+              14
+            ],
+            [
+              341,
+              300,
+              48,
+              14
+            ],
+            [
+              341,
+              300,
+              48,
+              14
+            ],
+            [
+              341,
+              300,
+              48,
+              14
+            ],
+            [
+              341,
+              301,
+              48,
+              14
+            ],
+            [
+              341,
+              301,
+              48,
+              14
+            ],
+            [
+              341,
+              301,
+              48,
+              14
+            ],
+            [
+              341,
+              301,
+              48,
+              14
+            ],
+            [
+              341,
+              300,
+              48,
+              14
+            ]
+          ],
+          "candidate_counts": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "center_x_range_m": [
+            0.15322667757670086,
+            0.2474057333809989
+          ],
+          "cone_candidates": 0,
+          "frames_with_target": 12,
+          "max_adjacent_center_x_jump_m": 0.09339906068075271,
+          "processing_ms_max": 206.29809994716197,
+          "processing_ms_p50": 146.59090002533048,
+          "structure_states": {
+            "supported": 2,
+            "unknown": 10
+          },
+          "target_extents": {
+            "partial": 12
+          },
+          "unmatched_candidates": 0
+        }
+      },
+      "template_settings": {
+        "both_metric_ratio": [
+          {
+            "aspect": 3.3125,
+            "label": "visually_reviewed_current_front_kobuki_20261011",
+            "min_correlation": 0.78,
+            "verified_correlation": 0.9,
+            "width_m": 0.3
+          },
+          {
+            "aspect": 2.8285714285714287,
+            "label": "reviewed_complete_front_base_20261011_far",
+            "metric_width_ratio": [
+              0.8,
+              1.2
+            ],
+            "min_correlation": 0.78,
+            "verified_correlation": 0.9,
+            "width_m": 0.33678857142857144
+          }
+        ],
+        "old": [
+          {
+            "aspect": 3.3125,
+            "label": "visually_reviewed_current_front_kobuki_20261011",
+            "min_correlation": 0.78,
+            "verified_correlation": 0.9,
+            "width_m": 0.3
+          }
+        ]
+      }
+    }
+  },
+  "data_policy": "Raw frames and per-frame diagnostic reports remain local under .tools/field-follow-fix; SHA256 values identify the exact data and code.",
+  "description": "Frozen RGB-D template comparisons, retaining numeric evidence only. No RGB frames or complete raw sequences are included.",
+  "overall_limitations": "Only one original static view and one user-reported 30-degree view are covered. No broad recognition-accuracy, moving-leader, obstacle-avoidance or competition acceptance claim."
+}

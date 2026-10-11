@@ -563,6 +563,8 @@ class NodeTests(unittest.TestCase):
         fake['sensor_msgs.point_cloud2'] = clouds
         with patch.dict(sys.modules, fake), \
              patch.object(sys.modules['rospy'], 'logwarn_throttle', self.Mock(), create=True), \
+             patch.object(sys.modules['rospy'], 'logerr_throttle', self.Mock(), create=True), \
+             patch.object(sys.modules['rospy'], 'is_shutdown', lambda: False, create=True), \
              patch.object(sys.modules['sensor_msgs.msg'], 'Image', object, create=True), \
              patch.object(sys.modules['sensor_msgs.msg'], 'CameraInfo', object, create=True), \
              patch.object(sys.modules['std_msgs.msg'], 'String', lambda data: self.NS(data=data)):
@@ -588,6 +590,18 @@ class NodeTests(unittest.TestCase):
             messages = [self.NS(width=320, height=240, encoding='32FC1',
                 header=self.NS(frame_id='rgb_optical', stamp=self.Stamp(self.now))) for unused in range(3)]
             messages[2].P = [250., 0., 160., 0., 0., 250., 120., 0., 0., 0., 1., 0.]
+            from rgbd_following_core.latest_pair import LatestPair
+            n.pending_pairs = LatestPair()
+            for message in messages:
+                message.header.stamp = self.Stamp(self.now+10.)
+            n.enqueue_pair(*messages)
+            self.assertIsNone(n.pending_pairs.take(.001))
+            for message in messages:
+                message.header.stamp = self.Stamp(self.now)
+            n.enqueue_pair(*messages)
+            self.assertEqual(n.pending_pairs.take(.001), tuple(messages))
+            self.assertIsNone(n.receipt)
+            self.assertIsNone(n.last_pair)
             for unused in range(4):
                 self.now += .1
                 for message in messages:
@@ -632,6 +646,24 @@ class NodeTests(unittest.TestCase):
             self.assertFalse(n.cloud.publish.call_args[0][0].points)
             n.valid.publish.assert_called_with(False)
             self.assertEqual(json.loads(n.status.publish.call_args[0][0].data)['reason'], 'depth_coverage_insufficient')
+            stop, calls = [False], []
+            module.rospy.is_shutdown = lambda: stop[0]
+            def interrupted_frame(*unused):
+                calls.append(True)
+                if len(calls) == 1:
+                    raise RuntimeError('unexpected decoder failure')
+                stop[0] = True
+            n.callback = interrupted_frame
+            n.pending_pairs = self.Mock()
+            n.pending_pairs.take.return_value = tuple(messages)
+            # A second exception while reporting failure must not terminate
+            # the processing thread and permanently lose later good frames.
+            n.valid.publish.side_effect = RuntimeError('temporary transport error')
+            n.detect_latest()
+            self.assertEqual(len(calls), 2)
+            self.assertEqual(n.tracker.reason, 'perception_worker_error')
+            n.valid.publish.side_effect = None
+            n.callback = module.Target.callback.__get__(n, module.Target)
             # Sparse real foreground must replace old marking points too,
             # even above the point-count threshold but below coverage ratio.
             depth[:40, :80] = 1.2

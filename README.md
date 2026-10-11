@@ -2,6 +2,23 @@
 
 TonyPi 识别并抱起物体，沿标定路线抱物行走、左转和右转，到终点放下；Turtlebot2 采用不同方式完成跟随。四个小组分工中，**我们负责方式三：RGB-D 实时检测与跟随 TonyPi，并完成避障**。仓库已有 TonyPi 和方式二代码可作参考，不代表本组当前分工。
 
+**当前场地调试（2026-10-11）：方式三使用本车 RGB-D 跟随前方 Turtlebot。**
+运行命令与可视化见 [方式三场地入口](turtlebot/follow3/README.md)，
+最新遮挡识别修改、性能数据及尚未通过的验收项见 [现场诊断](docs/method3_vision_field_diagnosis_20261011.md)。
+
+**方式三队员直接从 GitHub 部署：** 使用 [codex/method3-team-handoff 分支](https://github.com/aliensco/intelligent_robot_system/tree/codex/method3-team-handoff)，已包含当前 Turtlebot 模板和相机外参，不需要另取压缩包。
+
+```bash
+git clone --branch codex/method3-team-handoff --single-branch \
+  https://github.com/aliensco/intelligent_robot_system.git ~/method3-team-20261011
+cd ~/method3-team-20261011
+bash install.sh
+bash run.sh --view-only
+# 开始运动跟随与避障：bash run.sh；Ctrl+C 结束
+```
+
+环境为 Ubuntu 16.04 + ROS Kinetic。[快速启动](docs/method3-package-quickstart.md) 与 [团队交接](docs/method3-team-handoff.md) 说明运行、调参和继续开发；`profiles/team_current/` 保存共享配置，`runtime/` 保存安装后本机的可编辑副本。
+
 方式三已编写颜色与深度候选识别、连续目标关联、轨迹跟随、滚动里程计地图导航和独立速度门控，尚未实机验收。默认颜色只是示例，不能当作已可靠识别 TonyPi。只有虚拟机时，从 [方式三教程与联调说明](turtlebot/follow3/README.md) 的 `demo.launch` 开始；完整入口为 `follow.launch`，默认仅输出预览速度，实机执行需先标定。
 
 方式三进一步加入多视角外观模板与有界重识别、相机视野约束、实测速度制动包络和 VoxelLayer；配套登记/独立样本评估、录包回放、赛道验收报告与 Kinetic 集成测试入口。实机执行要求登记真实身份模板并验证标定，完整比赛验收仍需设备和四组联调。

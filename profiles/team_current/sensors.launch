@@ -1,0 +1,7 @@
+<launch>
+  <remap from="/mobile_base/commands/velocity" to="/codex_diagnostics/disabled_velocity_input" />
+  <include file="$(find kobuki_node)/launch/minimal.launch" />
+  <include file="$(find rgbd_following)/launch/probe.launch">
+    <arg name="depth_topic" value="/camera/depth_registered/hw_registered/image_rect" />
+  </include>
+</launch>

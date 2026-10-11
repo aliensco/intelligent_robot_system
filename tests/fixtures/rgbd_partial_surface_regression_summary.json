@@ -1,0 +1,1272 @@
+{
+  "description": "Development/regression replay of the twelve frames that failed the first shared-support validation. Continuous-surface logic was designed after seeing this failure; these are no longer held-out data.",
+  "limitations": "One static partially occluded arrangement, not broad identification, motion or avoidance acceptance. Reports visible base fragments, not reconstructed whole robots. Local Python/OpenCV timings are not VM ROS frame rates. New captures are required for independent validation.",
+  "source_sha256": "80f4653aa045d01db802e96ab81092f345a23f25dd0d24852cec385a8d750fbe",
+  "rgb_templates_sha256": "bed8ccca542a95edb21bfb2a14f143a9f58ec2c04cb3137eec58f5a0ab57be99",
+  "manual_candidate_regions_xywh": {
+    "front_robot_visible_base": [
+      150,
+      278,
+      86,
+      60
+    ],
+    "cone_base": [
+      180,
+      358,
+      150,
+      76
+    ]
+  },
+  "summary": {
+    "old_overlap": {
+      "frames": 12,
+      "frames_with_target": 12,
+      "missed_target_frames": 0,
+      "duplicate_target_frames": 11,
+      "unique_target_only_frames": 1,
+      "false_candidate_count": 0,
+      "candidate_counts": [
+        2,
+        2,
+        2,
+        2,
+        1,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "processing_ms_median": 261.04030007263646,
+      "processing_ms_max": 289.46530004031956
+    },
+    "shared_support": {
+      "frames": 12,
+      "frames_with_target": 12,
+      "missed_target_frames": 0,
+      "duplicate_target_frames": 10,
+      "unique_target_only_frames": 2,
+      "false_candidate_count": 0,
+      "candidate_counts": [
+        2,
+        2,
+        2,
+        2,
+        1,
+        2,
+        2,
+        2,
+        2,
+        2,
+        1,
+        2
+      ],
+      "processing_ms_median": 256.0898999799974,
+      "processing_ms_max": 280.79190000426024
+    },
+    "surface_connected": {
+      "frames": 12,
+      "frames_with_target": 12,
+      "missed_target_frames": 0,
+      "duplicate_target_frames": 0,
+      "unique_target_only_frames": 12,
+      "false_candidate_count": 0,
+      "candidate_counts": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "processing_ms_median": 256.1635500169359,
+      "processing_ms_max": 328.0607999768108
+    }
+  },
+  "rows": [
+    {
+      "index": 0,
+      "stamps": [
+        1791715994.45215,
+        1791715994.4475756
+      ],
+      "old_overlap": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4370600295066833,
+              0.1985181086403983,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.23388059996068478
+      },
+      "shared_support": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4370600295066833,
+              0.1985181086403983,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.16030490002594888
+      },
+      "surface_connected": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.15713419998064637
+      }
+    },
+    {
+      "index": 1,
+      "stamps": [
+        1791715994.8522258,
+        1791715994.8468616
+      ],
+      "old_overlap": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.43498002529144286,
+              0.19757334482102168,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.1600311000365764
+      },
+      "shared_support": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.43498002529144286,
+              0.19757334482102168,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.1576397999888286
+      },
+      "surface_connected": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.16824709996581078
+      }
+    },
+    {
+      "index": 2,
+      "stamps": [
+        1791715995.2534196,
+        1791715995.249456
+      ],
+      "old_overlap": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4370600295066833,
+              0.1985181086403983,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.19110739999450743
+      },
+      "shared_support": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              156,
+              296,
+              48,
+              14
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4466657444408962,
+              0.20332096610750472,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.18974259996321052
+      },
+      "surface_connected": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.17975839995779097
+      }
+    },
+    {
+      "index": 3,
+      "stamps": [
+        1791715995.6875534,
+        1791715995.6831284
+      ],
+      "old_overlap": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4370600295066833,
+              0.1985181086403983,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.16155980003532022
+      },
+      "shared_support": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4370600295066833,
+              0.1985181086403983,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.16262449999339879
+      },
+      "surface_connected": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.17696879990398884
+      }
+    },
+    {
+      "index": 4,
+      "stamps": [
+        1791715996.1213167,
+        1791715996.1146522
+      ],
+      "old_overlap": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.1715270000277087
+      },
+      "shared_support": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.1696210999507457
+      },
+      "surface_connected": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.20863979996647686
+      }
+    },
+    {
+      "index": 5,
+      "stamps": [
+        1791715996.5502808,
+        1791715996.5495028
+      ],
+      "old_overlap": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4370600295066833,
+              0.1985181086403983,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.26608229998964816
+      },
+      "shared_support": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              156,
+              296,
+              48,
+              14
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4466657444408962,
+              0.20332096610750472,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.2675808999920264
+      },
+      "surface_connected": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.27849120006430894
+      }
+    },
+    {
+      "index": 6,
+      "stamps": [
+        1791715996.9503524,
+        1791715996.9501512
+      ],
+      "old_overlap": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4370600295066833,
+              0.1985181086403983,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.26247250009328127
+      },
+      "shared_support": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4370600295066833,
+              0.1985181086403983,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.2681399000575766
+      },
+      "surface_connected": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.27145750005729496
+      }
+    },
+    {
+      "index": 7,
+      "stamps": [
+        1791715997.3511245,
+        1791715997.3506112
+      ],
+      "old_overlap": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4370600295066833,
+              0.1985181086403983,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.28946530004031956
+      },
+      "shared_support": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              156,
+              296,
+              48,
+              14
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4466657444408962,
+              0.20332096610750472,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.2666576999472454
+      },
+      "surface_connected": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.2644055000273511
+      }
+    },
+    {
+      "index": 8,
+      "stamps": [
+        1791715997.7820787,
+        1791715997.784356
+      ],
+      "old_overlap": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4370600295066833,
+              0.1985181086403983,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.26841529994271696
+      },
+      "shared_support": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4370600295066833,
+              0.1985181086403983,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.28079190000426024
+      },
+      "surface_connected": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.27030570001807064
+      }
+    },
+    {
+      "index": 9,
+      "stamps": [
+        1791715998.1836898,
+        1791715998.1849573
+      ],
+      "old_overlap": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4370600295066833,
+              0.1985181086403983,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.2649237000150606
+      },
+      "shared_support": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4370600295066833,
+              0.1985181086403983,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.2677589999511838
+      },
+      "surface_connected": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.3280607999768108
+      }
+    },
+    {
+      "index": 10,
+      "stamps": [
+        1791715998.6146173,
+        1791715998.6208317
+      ],
+      "old_overlap": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              293,
+              56,
+              17
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4370600295066833,
+              0.1985181086403983,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.27314429997932166
+      },
+      "shared_support": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.2713462000247091
+      },
+      "surface_connected": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.26735209999606013
+      }
+    },
+    {
+      "index": 11,
+      "stamps": [
+        1791715999.0481017,
+        1791715999.0521216
+      ],
+      "old_overlap": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              155,
+              294,
+              56,
+              17
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.43498002529144286,
+              0.20076001167297364,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.25960810005199164
+      },
+      "shared_support": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          },
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              156,
+              297,
+              48,
+              14
+            ],
+            "depth": 1.6810001134872437,
+            "point": [
+              -0.4466657444408962,
+              0.20652287108557565,
+              1.6810001134872437
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.24552210001274943
+      },
+      "surface_connected": {
+        "candidates": [
+          {
+            "label": "front_robot_visible_base",
+            "bbox": [
+              157,
+              305,
+              64,
+              19
+            ],
+            "depth": 1.6730000972747803,
+            "point": [
+              -0.4158600241797311,
+              0.2390000138963972,
+              1.6730000972747803
+            ],
+            "identity_verified": false
+          }
+        ],
+        "processing_seconds": 0.24792160000652075
+      }
+    }
+  ]
+}

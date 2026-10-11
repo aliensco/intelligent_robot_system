@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-11",
+  "result": "PASS for deployment checks; full field acceptance remains incomplete",
+  "local_python3_tests": {
+    "command": "python -m unittest discover -s tests -p 'test_rgbd_*.py'",
+    "run": 290,
+    "passed": 290,
+    "skipped": 0
+  },
+  "static_validation": {
+    "python_files": 77,
+    "launch_yaml_and_route": "PASS"
+  },
+  "ubuntu16_kinetic_install": {
+    "command": "bash install.sh --skip-system",
+    "fresh_workspace": true,
+    "compiled_plugin": "librgbd_commissioning_clearance.so",
+    "result": "PASS"
+  },
+  "dependencies": {
+    "manifest_packages_present": 41,
+    "rospack_dependencies_found": 26,
+    "missing": []
+  },
+  "runtime_python2_tests": {
+    "run": 290,
+    "passed": 220,
+    "skipped": 70,
+    "errors": 0,
+    "skip_reason": "Python 3 test harnesses and offline calibration tool tests"
+  },
+  "reinstall_preserves_modified_runtime": "PASS",
+  "packaged_profile_settings_validation": "PASS",
+  "generated_field_launch_roslaunch_nodes_parse": "PASS",
+  "run_help_without_starting_ros": "PASS",
+  "hardware_motion_performed_for_packaging": false,
+  "limitations": [
+    "Build used an isolated new directory on the existing Ubuntu16/Kinetic VM, not a newly installed OS.",
+    "Missing-dependency apt downloads and new-user group activation were not exercised because all 41 dependencies already exist.",
+    "No live motion or full-course acceptance was performed for packaging."
+  ]
+}

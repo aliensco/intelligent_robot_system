@@ -1,0 +1,2159 @@
+{
+  "cv2": {
+    "path": "/opt/ros/kinetic/lib/python2.7/dist-packages/cv2.so",
+    "version": "3.3.1-dev"
+  },
+  "numpy": {
+    "path": "/usr/lib/python2.7/dist-packages/numpy/__init__.pyc",
+    "version": "1.11.0"
+  },
+  "yaml": {
+    "path": "/usr/lib/python2.7/dist-packages/yaml/__init__.pyc",
+    "version": "3.11"
+  },
+  "installed_packages": [
+    {
+      "name": "gir1.2-gudev-1.0:amd64",
+      "version": "1:230-2"
+    },
+    {
+      "name": "libeigen3-dev",
+      "version": "3.3~beta1-2"
+    },
+    {
+      "name": "libftdi-dev",
+      "version": "0.20-4build1"
+    },
+    {
+      "name": "libftdi1:amd64",
+      "version": "0.20-4build1"
+    },
+    {
+      "name": "libftdi1-2:amd64",
+      "version": "1.2-5build1"
+    },
+    {
+      "name": "libgudev-1.0-0:amd64",
+      "version": "1:230-2"
+    },
+    {
+      "name": "libopencv-calib3d-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-calib3d2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-contrib-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-contrib2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-core-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-core2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-dev",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-features2d-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-features2d2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-flann-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-flann2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-gpu-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-gpu2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-highgui-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-highgui2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-imgproc-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-imgproc2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-legacy-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-legacy2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-ml-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-ml2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-objdetect-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-objdetect2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-ocl-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-ocl2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-photo-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-photo2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-stitching-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-stitching2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-superres-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-superres2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-ts-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-ts2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-video-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-video2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-videostab-dev:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv-videostab2.4v5:amd64",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv2.4-java",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopencv2.4-jni",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "libopenni-dev",
+      "version": "1.5.4.0-14"
+    },
+    {
+      "name": "libopenni-sensor-pointclouds0",
+      "version": "5.1.0.41.5-1"
+    },
+    {
+      "name": "libopenni0",
+      "version": "1.5.4.0-14"
+    },
+    {
+      "name": "libopenni2-0",
+      "version": "2.2.0.33+dfsg-6"
+    },
+    {
+      "name": "libopenni2-dev",
+      "version": "2.2.0.33+dfsg-6"
+    },
+    {
+      "name": "libpcl-apps1.7",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-common1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-dev",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-features1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-filters1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-io1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-kdtree1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-keypoints1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-octree1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-outofcore1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-people1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-recognition1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-registration1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-sample-consensus1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-search1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-segmentation1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-surface1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-tracking1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl-visualization1.7:amd64",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libpcl1.7",
+      "version": "1.7.2-14ubuntu0.1"
+    },
+    {
+      "name": "libudev-dev:amd64",
+      "version": "229-4ubuntu21.29"
+    },
+    {
+      "name": "libudev1:amd64",
+      "version": "229-4ubuntu21.29"
+    },
+    {
+      "name": "libusb-0.1-4:amd64",
+      "version": "2:0.1.12-28"
+    },
+    {
+      "name": "libusb-1.0-0:amd64",
+      "version": "2:1.0.20-1"
+    },
+    {
+      "name": "libusb-1.0-0-dev:amd64",
+      "version": "2:1.0.20-1"
+    },
+    {
+      "name": "libusb-1.0-doc",
+      "version": "2:1.0.20-1"
+    },
+    {
+      "name": "libusb-dev",
+      "version": "2:0.1.12-28"
+    },
+    {
+      "name": "libusbmuxd4:amd64",
+      "version": "1.0.10-2ubuntu0.1"
+    },
+    {
+      "name": "opencv-data",
+      "version": "2.4.9.1+dfsg-1.5ubuntu1.1"
+    },
+    {
+      "name": "openni-utils",
+      "version": "1.5.4.0-14"
+    },
+    {
+      "name": "openssh-server",
+      "version": "1:7.2p2-4ubuntu2.10"
+    },
+    {
+      "name": "python-numpy",
+      "version": "1:1.11.0-1ubuntu1"
+    },
+    {
+      "name": "python-yaml",
+      "version": "3.11-3build1"
+    },
+    {
+      "name": "ros-kinetic-actionlib",
+      "version": "1.11.16-2xenial-20201103-043745+0000"
+    },
+    {
+      "name": "ros-kinetic-actionlib-msgs",
+      "version": "1.12.7-0xenial-20201017-193016+0000"
+    },
+    {
+      "name": "ros-kinetic-actionlib-tutorials",
+      "version": "0.1.10-0xenial-20201103-044936+0000"
+    },
+    {
+      "name": "ros-kinetic-amcl",
+      "version": "1.14.8-1xenial-20201103-060808+0000"
+    },
+    {
+      "name": "ros-kinetic-angles",
+      "version": "1.9.12-1xenial-20201017-202751+0000"
+    },
+    {
+      "name": "ros-kinetic-ar-track-alvar",
+      "version": "0.7.1-0xenial-20201203-013709+0000"
+    },
+    {
+      "name": "ros-kinetic-ar-track-alvar-msgs",
+      "version": "0.7.1-0xenial-20201017-194431+0000"
+    },
+    {
+      "name": "ros-kinetic-astra-camera",
+      "version": "0.2.2-1xenial-20201103-061211+0000"
+    },
+    {
+      "name": "ros-kinetic-astra-launch",
+      "version": "0.2.2-0xenial-20201103-104727+0000"
+    },
+    {
+      "name": "ros-kinetic-base-local-planner",
+      "version": "1.14.8-1xenial-20201203-021943+0000"
+    },
+    {
+      "name": "ros-kinetic-bfl",
+      "version": "0.7.0-2xenial-20201017-070343+0000"
+    },
+    {
+      "name": "ros-kinetic-bond",
+      "version": "1.8.3-0xenial-20201017-193115+0000"
+    },
+    {
+      "name": "ros-kinetic-bond-core",
+      "version": "1.8.3-0xenial-20201103-035612+0000"
+    },
+    {
+      "name": "ros-kinetic-bondcpp",
+      "version": "1.8.3-0xenial-20201103-023551+0000"
+    },
+    {
+      "name": "ros-kinetic-bondpy",
+      "version": "1.8.3-0xenial-20201103-032647+0000"
+    },
+    {
+      "name": "ros-kinetic-camera-calibration",
+      "version": "1.12.23-0xenial-20201103-075136+0000"
+    },
+    {
+      "name": "ros-kinetic-camera-calibration-parsers",
+      "version": "1.11.13-0xenial-20201103-053954+0000"
+    },
+    {
+      "name": "ros-kinetic-camera-info-manager",
+      "version": "1.11.13-0xenial-20201103-060145+0000"
+    },
+    {
+      "name": "ros-kinetic-capabilities",
+      "version": "0.2.0-0xenial-20201103-043958+0000"
+    },
+    {
+      "name": "ros-kinetic-carrot-planner",
+      "version": "1.14.8-1xenial-20201203-023349+0000"
+    },
+    {
+      "name": "ros-kinetic-cartographer",
+      "version": "0.2.0-2xenial-20191214-001531+0000"
+    },
+    {
+      "name": "ros-kinetic-cartographer-ros",
+      "version": "0.2.0-0xenial-20201203-011358+0000"
+    },
+    {
+      "name": "ros-kinetic-cartographer-ros-msgs",
+      "version": "0.2.0-0xenial-20201017-194547+0000"
+    },
+    {
+      "name": "ros-kinetic-cartographer-rviz",
+      "version": "0.2.0-0xenial-20210205-212748-0800"
+    },
+    {
+      "name": "ros-kinetic-catkin",
+      "version": "0.7.29-1xenial-20201014-192248+0000"
+    },
+    {
+      "name": "ros-kinetic-chomp-motion-planner",
+      "version": "0.9.18-1xenial-20201104-003644+0000"
+    },
+    {
+      "name": "ros-kinetic-class-loader",
+      "version": "0.3.9-0xenial-20191214-003009+0000"
+    },
+    {
+      "name": "ros-kinetic-clear-costmap-recovery",
+      "version": "1.14.8-1xenial-20201203-022011+0000"
+    },
+    {
+      "name": "ros-kinetic-cmake-modules",
+      "version": "0.4.2-0xenial-20191214-002351+0000"
+    },
+    {
+      "name": "ros-kinetic-collada-parser",
+      "version": "1.12.13-1xenial-20201103-052104+0000"
+    },
+    {
+      "name": "ros-kinetic-collada-urdf",
+      "version": "1.12.13-1xenial-20201103-053242+0000"
+    },
+    {
+      "name": "ros-kinetic-common-msgs",
+      "version": "1.12.7-0xenial-20201103-115044+0000"
+    },
+    {
+      "name": "ros-kinetic-common-tutorials",
+      "version": "0.1.10-0xenial-20201103-230506+0000"
+    },
+    {
+      "name": "ros-kinetic-compressed-depth-image-transport",
+      "version": "1.9.5-0xenial-20201103-070703+0000"
+    },
+    {
+      "name": "ros-kinetic-compressed-image-transport",
+      "version": "1.9.5-0xenial-20201103-070714+0000"
+    },
+    {
+      "name": "ros-kinetic-control-msgs",
+      "version": "1.5.1-1xenial-20201017-195858+0000"
+    },
+    {
+      "name": "ros-kinetic-control-toolbox",
+      "version": "1.17.0-0xenial-20201103-045104+0000"
+    },
+    {
+      "name": "ros-kinetic-controller-interface",
+      "version": "0.13.5-1xenial-20201103-041525+0000"
+    },
+    {
+      "name": "ros-kinetic-controller-manager",
+      "version": "0.13.5-1xenial-20201103-042341+0000"
+    },
+    {
+      "name": "ros-kinetic-controller-manager-msgs",
+      "version": "0.13.5-1xenial-20201017-193137+0000"
+    },
+    {
+      "name": "ros-kinetic-costmap-2d",
+      "version": "1.14.8-1xenial-20201203-013841+0000"
+    },
+    {
+      "name": "ros-kinetic-cpp-common",
+      "version": "0.6.11-0xenial-20191214-013837+0000"
+    },
+    {
+      "name": "ros-kinetic-create-description",
+      "version": "2.3.1-0xenial-20201103-052230+0000"
+    },
+    {
+      "name": "ros-kinetic-create-driver",
+      "version": "2.3.1-0xenial-20191214-034003+0000"
+    },
+    {
+      "name": "ros-kinetic-create-node",
+      "version": "2.3.1-0xenial-20201103-063849+0000"
+    },
+    {
+      "name": "ros-kinetic-cv-bridge",
+      "version": "1.12.8-0xenial-20201103-054046+0000"
+    },
+    {
+      "name": "ros-kinetic-depth-image-proc",
+      "version": "1.12.23-0xenial-20201103-083722+0000"
+    },
+    {
+      "name": "ros-kinetic-depthimage-to-laserscan",
+      "version": "1.0.7-0xenial-20210503-155645-0800"
+    },
+    {
+      "name": "ros-kinetic-desktop",
+      "version": "1.3.2-0xenial-20201116-175404+0000"
+    },
+    {
+      "name": "ros-kinetic-desktop-full",
+      "version": "1.3.2-0xenial-20201203-022538+0000"
+    },
+    {
+      "name": "ros-kinetic-diagnostic-aggregator",
+      "version": "1.9.3-0xenial-20201103-040419+0000"
+    },
+    {
+      "name": "ros-kinetic-diagnostic-analysis",
+      "version": "1.9.3-0xenial-20201103-044311+0000"
+    },
+    {
+      "name": "ros-kinetic-diagnostic-common-diagnostics",
+      "version": "1.9.3-0xenial-20201103-063859+0000"
+    },
+    {
+      "name": "ros-kinetic-diagnostic-msgs",
+      "version": "1.12.7-0xenial-20201017-193237+0000"
+    },
+    {
+      "name": "ros-kinetic-diagnostic-updater",
+      "version": "1.9.3-0xenial-20201103-040625+0000"
+    },
+    {
+      "name": "ros-kinetic-diagnostics",
+      "version": "1.9.3-0xenial-20201103-070354+0000"
+    },
+    {
+      "name": "ros-kinetic-dwa-local-planner",
+      "version": "1.14.8-1xenial-20201203-023305+0000"
+    },
+    {
+      "name": "ros-kinetic-dynamic-reconfigure",
+      "version": "1.5.50-0xenial-20201103-043947+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-build",
+      "version": "0.61.6-0xenial-20191214-001820+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-command-line",
+      "version": "0.61.17-0xenial-20191214-001821+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-concepts",
+      "version": "0.61.17-0xenial-20191214-003240+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-config",
+      "version": "0.61.6-0xenial-20191214-002219+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-console",
+      "version": "0.61.6-0xenial-20191214-002714+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-containers",
+      "version": "0.61.17-0xenial-20191214-032948+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-converters",
+      "version": "0.61.17-0xenial-20191214-013358+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-devices",
+      "version": "0.61.17-0xenial-20191214-033721+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-eigen",
+      "version": "0.61.17-0xenial-20191214-002750+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-errors",
+      "version": "0.61.6-0xenial-20191214-002726+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-exceptions",
+      "version": "0.61.17-0xenial-20191214-003234+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-formatters",
+      "version": "0.61.17-0xenial-20191214-013916+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-geometry",
+      "version": "0.61.17-0xenial-20201017-190716+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-license",
+      "version": "0.61.6-0xenial-20191214-001303+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-linear-algebra",
+      "version": "0.61.17-0xenial-20201017-185544+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-math",
+      "version": "0.61.17-0xenial-20191214-003311+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-mobile-robot",
+      "version": "0.60.3-0xenial-20201017-202603+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-mpl",
+      "version": "0.61.17-0xenial-20191214-001842+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-sigslots",
+      "version": "0.61.17-0xenial-20191214-032957+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-streams",
+      "version": "0.61.17-0xenial-20191214-035658+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-threads",
+      "version": "0.61.17-0xenial-20191214-014228+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-time",
+      "version": "0.61.17-0xenial-20191214-013503+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-time-lite",
+      "version": "0.61.6-0xenial-20191214-003301+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-type-traits",
+      "version": "0.61.17-0xenial-20191214-002739+0000"
+    },
+    {
+      "name": "ros-kinetic-ecl-utilities",
+      "version": "0.61.17-0xenial-20191214-013643+0000"
+    },
+    {
+      "name": "ros-kinetic-effort-controllers",
+      "version": "0.13.6-1xenial-20201103-050341+0000"
+    },
+    {
+      "name": "ros-kinetic-eigen-conversions",
+      "version": "1.11.9-0xenial-20201017-203729+0000"
+    },
+    {
+      "name": "ros-kinetic-eigen-stl-containers",
+      "version": "0.1.8-0xenial-20191214-002815+0000"
+    },
+    {
+      "name": "ros-kinetic-eigenpy",
+      "version": "2.5.0-1xenial-20201017-070459+0000"
+    },
+    {
+      "name": "ros-kinetic-executive-smach",
+      "version": "2.0.1-0xenial-20201103-071443+0000"
+    },
+    {
+      "name": "ros-kinetic-fake-localization",
+      "version": "1.14.8-1xenial-20201103-051823+0000"
+    },
+    {
+      "name": "ros-kinetic-filters",
+      "version": "1.7.5-0xenial-20201103-040401+0000"
+    },
+    {
+      "name": "ros-kinetic-forward-command-controller",
+      "version": "0.13.6-1xenial-20201103-043634+0000"
+    },
+    {
+      "name": "ros-kinetic-freenect-camera",
+      "version": "0.4.2-0xenial-20201103-061127+0000"
+    },
+    {
+      "name": "ros-kinetic-freenect-launch",
+      "version": "0.4.2-0xenial-20201103-104757+0000"
+    },
+    {
+      "name": "ros-kinetic-freenect-stack",
+      "version": "0.4.2-0xenial-20201103-144844+0000"
+    },
+    {
+      "name": "ros-kinetic-gateway-msgs",
+      "version": "0.9.0-1xenial-20201017-193348+0000"
+    },
+    {
+      "name": "ros-kinetic-gazebo-dev",
+      "version": "2.5.20-1xenial-20200508-183533+0000"
+    },
+    {
+      "name": "ros-kinetic-gazebo-msgs",
+      "version": "2.5.20-1xenial-20201103-073242+0000"
+    },
+    {
+      "name": "ros-kinetic-gazebo-plugins",
+      "version": "2.5.21-1xenial-20210503-130101-0800"
+    },
+    {
+      "name": "ros-kinetic-gazebo-ros",
+      "version": "2.5.20-1xenial-20201103-074506+0000"
+    },
+    {
+      "name": "ros-kinetic-gazebo-ros-control",
+      "version": "2.5.20-1xenial-20201103-075644+0000"
+    },
+    {
+      "name": "ros-kinetic-gazebo-ros-pkgs",
+      "version": "2.5.20-1xenial-20201103-085548+0000"
+    },
+    {
+      "name": "ros-kinetic-gencpp",
+      "version": "0.6.0-0xenial-20201017-072056+0000"
+    },
+    {
+      "name": "ros-kinetic-geneus",
+      "version": "2.2.6-0xenial-20201017-071930+0000"
+    },
+    {
+      "name": "ros-kinetic-genlisp",
+      "version": "0.4.16-0xenial-20201017-072240+0000"
+    },
+    {
+      "name": "ros-kinetic-genmsg",
+      "version": "0.5.11-0xenial-20201017-070425+0000"
+    },
+    {
+      "name": "ros-kinetic-gennodejs",
+      "version": "2.0.1-0xenial-20201017-072129+0000"
+    },
+    {
+      "name": "ros-kinetic-genpy",
+      "version": "0.6.14-1xenial-20201017-072136+0000"
+    },
+    {
+      "name": "ros-kinetic-geometric-shapes",
+      "version": "0.5.4-1xenial-20201103-022954+0000"
+    },
+    {
+      "name": "ros-kinetic-geometry",
+      "version": "1.11.9-0xenial-20201103-120903+0000"
+    },
+    {
+      "name": "ros-kinetic-geometry-msgs",
+      "version": "1.12.7-0xenial-20201017-193401+0000"
+    },
+    {
+      "name": "ros-kinetic-geometry-tutorials",
+      "version": "0.2.2-0xenial-20201103-071448+0000"
+    },
+    {
+      "name": "ros-kinetic-gl-dependency",
+      "version": "1.1.0-0xenial-20191214-040753+0000"
+    },
+    {
+      "name": "ros-kinetic-global-planner",
+      "version": "1.14.8-1xenial-20201203-022805+0000"
+    },
+    {
+      "name": "ros-kinetic-gmapping",
+      "version": "1.3.10-0xenial-20201103-055845+0000"
+    },
+    {
+      "name": "ros-kinetic-hardware-interface",
+      "version": "0.13.5-1xenial-20201103-040635+0000"
+    },
+    {
+      "name": "ros-kinetic-hector-compressed-map-transport",
+      "version": "0.3.5-0xenial-20201103-072237+0000"
+    },
+    {
+      "name": "ros-kinetic-hector-geotiff",
+      "version": "0.3.5-0xenial-20201103-023502+0000"
+    },
+    {
+      "name": "ros-kinetic-hector-geotiff-plugins",
+      "version": "0.3.5-0xenial-20201103-035646+0000"
+    },
+    {
+      "name": "ros-kinetic-hector-imu-attitude-to-tf",
+      "version": "0.3.5-0xenial-20201103-060914+0000"
+    },
+    {
+      "name": "ros-kinetic-hector-map-server",
+      "version": "0.3.5-0xenial-20201103-060952+0000"
+    },
+    {
+      "name": "ros-kinetic-hector-map-tools",
+      "version": "0.3.5-0xenial-20201017-203804+0000"
+    },
+    {
+      "name": "ros-kinetic-hector-mapping",
+      "version": "0.3.5-0xenial-20210205-203539-0800"
+    },
+    {
+      "name": "ros-kinetic-hector-marker-drawing",
+      "version": "0.3.5-0xenial-20201103-024506+0000"
+    },
+    {
+      "name": "ros-kinetic-hector-nav-msgs",
+      "version": "0.3.5-0xenial-20201017-195256+0000"
+    },
+    {
+      "name": "ros-kinetic-hector-slam",
+      "version": "0.3.5-0xenial-20210205-204236-0800"
+    },
+    {
+      "name": "ros-kinetic-hector-slam-launch",
+      "version": "0.3.5-0xenial-20210205-204057-0800"
+    },
+    {
+      "name": "ros-kinetic-hector-trajectory-server",
+      "version": "0.3.5-0xenial-20201103-061002+0000"
+    },
+    {
+      "name": "ros-kinetic-image-common",
+      "version": "1.11.13-0xenial-20201103-083050+0000"
+    },
+    {
+      "name": "ros-kinetic-image-geometry",
+      "version": "1.12.8-0xenial-20201103-073313+0000"
+    },
+    {
+      "name": "ros-kinetic-image-pipeline",
+      "version": "1.12.23-0xenial-20201103-120914+0000"
+    },
+    {
+      "name": "ros-kinetic-image-proc",
+      "version": "1.12.23-0xenial-20201103-074628+0000"
+    },
+    {
+      "name": "ros-kinetic-image-publisher",
+      "version": "1.12.23-0xenial-20201103-061340+0000"
+    },
+    {
+      "name": "ros-kinetic-image-rotate",
+      "version": "1.12.23-0xenial-20201103-055711+0000"
+    },
+    {
+      "name": "ros-kinetic-image-transport",
+      "version": "1.11.13-0xenial-20201103-053940+0000"
+    },
+    {
+      "name": "ros-kinetic-image-transport-plugins",
+      "version": "1.9.5-0xenial-20201103-083929+0000"
+    },
+    {
+      "name": "ros-kinetic-image-view",
+      "version": "1.12.23-0xenial-20201103-115054+0000"
+    },
+    {
+      "name": "ros-kinetic-interactive-marker-tutorials",
+      "version": "0.10.5-1xenial-20201103-061049+0000"
+    },
+    {
+      "name": "ros-kinetic-interactive-markers",
+      "version": "1.11.5-1xenial-20201103-055445+0000"
+    },
+    {
+      "name": "ros-kinetic-joint-limits-interface",
+      "version": "0.13.5-1xenial-20201103-041558+0000"
+    },
+    {
+      "name": "ros-kinetic-joint-state-controller",
+      "version": "0.13.6-1xenial-20201103-054447+0000"
+    },
+    {
+      "name": "ros-kinetic-joint-state-publisher",
+      "version": "1.12.15-1xenial-20201103-064431+0000"
+    },
+    {
+      "name": "ros-kinetic-joint-state-publisher-gui",
+      "version": "1.12.15-1xenial-20210503-161522-0800"
+    },
+    {
+      "name": "ros-kinetic-joint-trajectory-controller",
+      "version": "0.13.6-1xenial-20201103-050230+0000"
+    },
+    {
+      "name": "ros-kinetic-joy",
+      "version": "1.13.0-1xenial-20201103-084459+0000"
+    },
+    {
+      "name": "ros-kinetic-kdl-conversions",
+      "version": "1.11.9-0xenial-20201017-194241+0000"
+    },
+    {
+      "name": "ros-kinetic-kdl-parser",
+      "version": "1.12.11-0xenial-20201103-041256+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki",
+      "version": "0.7.6-0xenial-20201103-081409+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-auto-docking",
+      "version": "0.7.6-0xenial-20201103-050106+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-bumper2pc",
+      "version": "0.7.6-0xenial-20201103-054333+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-capabilities",
+      "version": "0.7.6-0xenial-20201103-075330+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-controller-tutorial",
+      "version": "0.7.6-0xenial-20201103-025927+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-core",
+      "version": "0.7.10-1xenial-20201017-211331+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-description",
+      "version": "0.7.6-0xenial-20210503-154252-0800"
+    },
+    {
+      "name": "ros-kinetic-kobuki-dock-drive",
+      "version": "0.7.10-1xenial-20201017-202612+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-driver",
+      "version": "0.7.10-1xenial-20201017-210504+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-ftdi",
+      "version": "0.7.10-1xenial-20200915-223524+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-gazebo-plugins",
+      "version": "0.5.7-0xenial-20210503-131839-0800"
+    },
+    {
+      "name": "ros-kinetic-kobuki-keyop",
+      "version": "0.7.6-0xenial-20201103-050155+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-msgs",
+      "version": "0.7.0-0xenial-20201017-193824+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-node",
+      "version": "0.7.6-0xenial-20201103-055954+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-random-walker",
+      "version": "0.7.6-0xenial-20201103-050114+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-rapps",
+      "version": "0.7.6-0xenial-20201103-051238+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-safety-controller",
+      "version": "0.7.6-0xenial-20201103-025934+0000"
+    },
+    {
+      "name": "ros-kinetic-kobuki-testsuite",
+      "version": "0.7.6-0xenial-20201103-072226+0000"
+    },
+    {
+      "name": "ros-kinetic-laptop-battery-monitor",
+      "version": "0.2.0-0xenial-20201103-064718+0000"
+    },
+    {
+      "name": "ros-kinetic-laser-assembler",
+      "version": "1.7.4-0xenial-20201103-062208+0000"
+    },
+    {
+      "name": "ros-kinetic-laser-filters",
+      "version": "1.8.5-0xenial-20201103-062228+0000"
+    },
+    {
+      "name": "ros-kinetic-laser-geometry",
+      "version": "1.6.5-1xenial-20201103-061108+0000"
+    },
+    {
+      "name": "ros-kinetic-laser-pipeline",
+      "version": "1.6.2-0xenial-20201103-074010+0000"
+    },
+    {
+      "name": "ros-kinetic-laser-proc",
+      "version": "0.1.4-0xenial-20201103-053928+0000"
+    },
+    {
+      "name": "ros-kinetic-libfreenect",
+      "version": "0.5.1-0xenial-20201017-070625+0000"
+    },
+    {
+      "name": "ros-kinetic-librealsense",
+      "version": "1.12.1-0xenial-20191214-013909+0000"
+    },
+    {
+      "name": "ros-kinetic-librviz-tutorial",
+      "version": "0.10.5-1xenial-20201103-094653+0000"
+    },
+    {
+      "name": "ros-kinetic-map-msgs",
+      "version": "1.14.1-1xenial-20201103-085450+0000"
+    },
+    {
+      "name": "ros-kinetic-map-server",
+      "version": "1.14.8-1xenial-20201103-040705+0000"
+    },
+    {
+      "name": "ros-kinetic-media-export",
+      "version": "0.3.0-1xenial-20200310-065508+0000"
+    },
+    {
+      "name": "ros-kinetic-message-filters",
+      "version": "1.12.17-1xenial-20201103-040339+0000"
+    },
+    {
+      "name": "ros-kinetic-message-generation",
+      "version": "0.4.0-0xenial-20201017-073322+0000"
+    },
+    {
+      "name": "ros-kinetic-message-runtime",
+      "version": "0.4.12-0xenial-20201017-190047+0000"
+    },
+    {
+      "name": "ros-kinetic-mk",
+      "version": "1.14.6-1xenial-20201017-203102+0000"
+    },
+    {
+      "name": "ros-kinetic-move-base",
+      "version": "1.14.8-1xenial-20201203-024215+0000"
+    },
+    {
+      "name": "ros-kinetic-move-base-msgs",
+      "version": "1.14.1-1xenial-20201103-021217+0000"
+    },
+    {
+      "name": "ros-kinetic-move-slow-and-clear",
+      "version": "1.14.8-1xenial-20201203-022106+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit",
+      "version": "0.9.18-1xenial-20210205-220449-0800"
+    },
+    {
+      "name": "ros-kinetic-moveit-commander",
+      "version": "0.9.18-1xenial-20201104-014448+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-core",
+      "version": "0.9.18-1xenial-20201104-002003+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-fake-controller-manager",
+      "version": "0.9.18-1xenial-20201104-010757+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-kinematics",
+      "version": "0.9.18-1xenial-20201104-010801+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-msgs",
+      "version": "0.9.1-0xenial-20201103-073448+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-planners",
+      "version": "0.9.18-1xenial-20201104-015159+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-planners-chomp",
+      "version": "0.9.18-1xenial-20201104-014644+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-planners-ompl",
+      "version": "0.9.18-1xenial-20201104-010536+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-plugins",
+      "version": "0.9.18-1xenial-20201104-011335+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-ros",
+      "version": "0.9.18-1xenial-20210205-220010-0800"
+    },
+    {
+      "name": "ros-kinetic-moveit-ros-benchmarks",
+      "version": "0.9.18-1xenial-20201104-011049+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-ros-control-interface",
+      "version": "0.9.18-1xenial-20201104-004754+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-ros-manipulation",
+      "version": "0.9.18-1xenial-20201104-012704+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-ros-move-group",
+      "version": "0.9.18-1xenial-20201104-011447+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-ros-perception",
+      "version": "0.9.18-1xenial-20201104-003756+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-ros-planning",
+      "version": "0.9.18-1xenial-20201104-004945+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-ros-planning-interface",
+      "version": "0.9.18-1xenial-20201104-013508+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-ros-robot-interaction",
+      "version": "0.9.18-1xenial-20201104-011059+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-ros-visualization",
+      "version": "0.9.18-1xenial-20210205-212035-0800"
+    },
+    {
+      "name": "ros-kinetic-moveit-ros-warehouse",
+      "version": "0.9.18-1xenial-20201104-010308+0000"
+    },
+    {
+      "name": "ros-kinetic-moveit-setup-assistant",
+      "version": "0.9.18-1xenial-20210205-213343-0800"
+    },
+    {
+      "name": "ros-kinetic-moveit-simple-controller-manager",
+      "version": "0.9.18-1xenial-20201104-003806+0000"
+    },
+    {
+      "name": "ros-kinetic-nav-core",
+      "version": "1.14.8-1xenial-20201203-021215+0000"
+    },
+    {
+      "name": "ros-kinetic-nav-msgs",
+      "version": "1.12.7-0xenial-20201017-194342+0000"
+    },
+    {
+      "name": "ros-kinetic-navfn",
+      "version": "1.14.8-1xenial-20201203-021955+0000"
+    },
+    {
+      "name": "ros-kinetic-navigation",
+      "version": "1.14.8-1xenial-20201203-025411+0000"
+    },
+    {
+      "name": "ros-kinetic-nodelet",
+      "version": "1.9.14-0xenial-20201103-024100+0000"
+    },
+    {
+      "name": "ros-kinetic-nodelet-core",
+      "version": "1.9.14-0xenial-20201103-050305+0000"
+    },
+    {
+      "name": "ros-kinetic-nodelet-topic-tools",
+      "version": "1.9.14-0xenial-20201103-045043+0000"
+    },
+    {
+      "name": "ros-kinetic-nodelet-tutorial-math",
+      "version": "0.1.10-0xenial-20201103-024652+0000"
+    },
+    {
+      "name": "ros-kinetic-object-recognition-msgs",
+      "version": "0.4.1-0xenial-20201103-072212+0000"
+    },
+    {
+      "name": "ros-kinetic-octomap",
+      "version": "1.8.1-0xenial-20201017-070729+0000"
+    },
+    {
+      "name": "ros-kinetic-octomap-msgs",
+      "version": "0.3.3-0xenial-20201017-194837+0000"
+    },
+    {
+      "name": "ros-kinetic-ompl",
+      "version": "1.2.3-1xenial-20190530-233922-0800"
+    },
+    {
+      "name": "ros-kinetic-open-karto",
+      "version": "1.1.4-0xenial-20191214-014237+0000"
+    },
+    {
+      "name": "ros-kinetic-opencv3",
+      "version": "3.3.1-5xenial-20201017-070853+0000"
+    },
+    {
+      "name": "ros-kinetic-openni-camera",
+      "version": "1.11.0-0xenial-20201103-061453+0000"
+    },
+    {
+      "name": "ros-kinetic-openni-description",
+      "version": "1.11.0-0xenial-20201103-065544+0000"
+    },
+    {
+      "name": "ros-kinetic-openni-launch",
+      "version": "1.11.0-0xenial-20201103-104802+0000"
+    },
+    {
+      "name": "ros-kinetic-openni2-camera",
+      "version": "0.4.2-0xenial-20201103-061406+0000"
+    },
+    {
+      "name": "ros-kinetic-openni2-launch",
+      "version": "0.4.2-0xenial-20201103-102227+0000"
+    },
+    {
+      "name": "ros-kinetic-openslam-gmapping",
+      "version": "0.1.2-0xenial-20191214-001421+0000"
+    },
+    {
+      "name": "ros-kinetic-orocos-kdl",
+      "version": "1.3.2-1xenial-20201017-070916+0000"
+    },
+    {
+      "name": "ros-kinetic-pcl-conversions",
+      "version": "0.2.1-0xenial-20201203-010854+0000"
+    },
+    {
+      "name": "ros-kinetic-pcl-msgs",
+      "version": "0.2.0-0xenial-20201103-073852+0000"
+    },
+    {
+      "name": "ros-kinetic-pcl-ros",
+      "version": "1.4.4-0xenial-20201203-011510+0000"
+    },
+    {
+      "name": "ros-kinetic-perception",
+      "version": "1.3.2-0xenial-20201203-020538+0000"
+    },
+    {
+      "name": "ros-kinetic-perception-pcl",
+      "version": "1.4.4-0xenial-20201203-014302+0000"
+    },
+    {
+      "name": "ros-kinetic-pluginlib",
+      "version": "1.11.3-0xenial-20201103-022357+0000"
+    },
+    {
+      "name": "ros-kinetic-pluginlib-tutorials",
+      "version": "0.1.10-0xenial-20201103-023630+0000"
+    },
+    {
+      "name": "ros-kinetic-polled-camera",
+      "version": "1.11.13-0xenial-20201103-060325+0000"
+    },
+    {
+      "name": "ros-kinetic-position-controllers",
+      "version": "0.13.6-1xenial-20201103-053247+0000"
+    },
+    {
+      "name": "ros-kinetic-python-orocos-kdl",
+      "version": "1.3.2-1xenial-20201017-185440+0000"
+    },
+    {
+      "name": "ros-kinetic-python-qt-binding",
+      "version": "0.3.7-1xenial-20201017-203105+0000"
+    },
+    {
+      "name": "ros-kinetic-qt-dotgraph",
+      "version": "0.3.17-1xenial-20201017-210717+0000"
+    },
+    {
+      "name": "ros-kinetic-qt-gui",
+      "version": "0.3.17-1xenial-20201017-210728+0000"
+    },
+    {
+      "name": "ros-kinetic-qt-gui-cpp",
+      "version": "0.3.17-1xenial-20201103-023525+0000"
+    },
+    {
+      "name": "ros-kinetic-qt-gui-py-common",
+      "version": "0.3.17-1xenial-20201017-210742+0000"
+    },
+    {
+      "name": "ros-kinetic-qwt-dependency",
+      "version": "1.1.0-0xenial-20191214-001919+0000"
+    },
+    {
+      "name": "ros-kinetic-random-numbers",
+      "version": "0.3.1-0xenial-20191214-035955+0000"
+    },
+    {
+      "name": "ros-kinetic-realsense-camera",
+      "version": "1.8.1-1xenial-20201203-015832+0000"
+    },
+    {
+      "name": "ros-kinetic-realtime-tools",
+      "version": "1.11.1-0xenial-20201103-024328+0000"
+    },
+    {
+      "name": "ros-kinetic-resource-retriever",
+      "version": "1.12.6-1xenial-20201103-022413+0000"
+    },
+    {
+      "name": "ros-kinetic-rgbd-launch",
+      "version": "2.2.2-0xenial-20201103-085048+0000"
+    },
+    {
+      "name": "ros-kinetic-robot",
+      "version": "1.3.2-0xenial-20201103-233358+0000"
+    },
+    {
+      "name": "ros-kinetic-robot-model",
+      "version": "1.12.11-0xenial-20201103-065558+0000"
+    },
+    {
+      "name": "ros-kinetic-robot-pose-ekf",
+      "version": "1.14.8-1xenial-20201103-062050+0000"
+    },
+    {
+      "name": "ros-kinetic-robot-pose-publisher",
+      "version": "0.2.4-0xenial-20201103-062057+0000"
+    },
+    {
+      "name": "ros-kinetic-robot-state-publisher",
+      "version": "1.13.7-1xenial-20201103-232332+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-app-manager",
+      "version": "0.9.1-0xenial-20201103-074115+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-app-manager-msgs",
+      "version": "0.9.0-1xenial-20201103-051238+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-app-utilities",
+      "version": "0.9.1-0xenial-20201103-073103+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-apps",
+      "version": "0.9.1-0xenial-20201103-052347+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-bubble-icons",
+      "version": "0.3.2-1xenial-20191214-002508+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-console",
+      "version": "0.3.2-1xenial-20191214-014114+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-ebnf",
+      "version": "0.3.2-1xenial-20201017-202829+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-gateway",
+      "version": "0.8.1-2xenial-20201103-051145+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-gateway-utils",
+      "version": "0.8.1-2xenial-20201103-045010+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-hub",
+      "version": "0.8.1-2xenial-20201103-052134+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-hub-client",
+      "version": "0.8.1-2xenial-20201103-045953+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-icons",
+      "version": "0.3.2-1xenial-20191214-003541+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-interaction-msgs",
+      "version": "0.9.0-1xenial-20201103-071247+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-interactions",
+      "version": "0.3.2-1xenial-20201103-072907+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-master-info",
+      "version": "0.3.2-1xenial-20201103-072933+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-python-comms",
+      "version": "0.3.2-1xenial-20201103-043926+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-python-redis",
+      "version": "0.3.2-1xenial-20191214-014318+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-python-utils",
+      "version": "0.3.2-1xenial-20201103-050024+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-python-wifi",
+      "version": "0.3.2-1xenial-20191214-003055+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-semantic-version",
+      "version": "0.3.2-1xenial-20191214-001437+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-service-pair-msgs",
+      "version": "0.9.0-1xenial-20201103-033326+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-std-msgs",
+      "version": "0.9.0-1xenial-20201103-044658+0000"
+    },
+    {
+      "name": "ros-kinetic-rocon-uri",
+      "version": "0.3.2-1xenial-20201103-071728+0000"
+    },
+    {
+      "name": "ros-kinetic-ros",
+      "version": "1.14.6-1xenial-20201017-204036+0000"
+    },
+    {
+      "name": "ros-kinetic-ros-base",
+      "version": "1.3.2-0xenial-20201103-121012+0000"
+    },
+    {
+      "name": "ros-kinetic-ros-comm",
+      "version": "1.12.17-1xenial-20201103-044923+0000"
+    },
+    {
+      "name": "ros-kinetic-ros-core",
+      "version": "1.3.2-0xenial-20201103-120103+0000"
+    },
+    {
+      "name": "ros-kinetic-ros-environment",
+      "version": "1.0.1-1xenial-20191214-013549+0000"
+    },
+    {
+      "name": "ros-kinetic-ros-tutorials",
+      "version": "0.7.1-0xenial-20201103-043600+0000"
+    },
+    {
+      "name": "ros-kinetic-rosbag",
+      "version": "1.12.17-1xenial-20201103-041238+0000"
+    },
+    {
+      "name": "ros-kinetic-rosbag-migration-rule",
+      "version": "1.0.0-0xenial-20191214-002240+0000"
+    },
+    {
+      "name": "ros-kinetic-rosbag-storage",
+      "version": "1.12.17-1xenial-20201103-022141+0000"
+    },
+    {
+      "name": "ros-kinetic-rosbash",
+      "version": "1.14.6-1xenial-20201017-070912+0000"
+    },
+    {
+      "name": "ros-kinetic-rosboost-cfg",
+      "version": "1.14.6-1xenial-20191214-013600+0000"
+    },
+    {
+      "name": "ros-kinetic-rosbuild",
+      "version": "1.14.6-1xenial-20201017-191131+0000"
+    },
+    {
+      "name": "ros-kinetic-rosclean",
+      "version": "1.14.6-1xenial-20191214-001017+0000"
+    },
+    {
+      "name": "ros-kinetic-rosconsole",
+      "version": "1.12.17-1xenial-20201103-021328+0000"
+    },
+    {
+      "name": "ros-kinetic-rosconsole-bridge",
+      "version": "0.5.2-0xenial-20201103-022345+0000"
+    },
+    {
+      "name": "ros-kinetic-roscpp",
+      "version": "1.12.17-1xenial-20201103-022250+0000"
+    },
+    {
+      "name": "ros-kinetic-roscpp-core",
+      "version": "0.6.11-0xenial-20191214-040930+0000"
+    },
+    {
+      "name": "ros-kinetic-roscpp-serialization",
+      "version": "0.6.11-0xenial-20191214-040238+0000"
+    },
+    {
+      "name": "ros-kinetic-roscpp-traits",
+      "version": "0.6.11-0xenial-20191214-035847+0000"
+    },
+    {
+      "name": "ros-kinetic-roscpp-tutorials",
+      "version": "0.7.1-0xenial-20201103-023301+0000"
+    },
+    {
+      "name": "ros-kinetic-roscreate",
+      "version": "1.14.6-1xenial-20201017-190703+0000"
+    },
+    {
+      "name": "ros-kinetic-rosgraph",
+      "version": "1.12.17-1xenial-20201103-021158+0000"
+    },
+    {
+      "name": "ros-kinetic-rosgraph-msgs",
+      "version": "1.11.2-0xenial-20201017-195539+0000"
+    },
+    {
+      "name": "ros-kinetic-roslang",
+      "version": "1.14.6-1xenial-20201017-071954+0000"
+    },
+    {
+      "name": "ros-kinetic-roslaunch",
+      "version": "1.12.17-1xenial-20201103-025528+0000"
+    },
+    {
+      "name": "ros-kinetic-roslib",
+      "version": "1.14.6-1xenial-20201017-185445+0000"
+    },
+    {
+      "name": "ros-kinetic-roslint",
+      "version": "0.11.0-0xenial-20191214-002257+0000"
+    },
+    {
+      "name": "ros-kinetic-roslisp",
+      "version": "1.9.23-1xenial-20201017-200434+0000"
+    },
+    {
+      "name": "ros-kinetic-roslz4",
+      "version": "1.12.17-1xenial-20201103-021342+0000"
+    },
+    {
+      "name": "ros-kinetic-rosmake",
+      "version": "1.14.6-1xenial-20201017-071148+0000"
+    },
+    {
+      "name": "ros-kinetic-rosmaster",
+      "version": "1.12.17-1xenial-20201103-022128+0000"
+    },
+    {
+      "name": "ros-kinetic-rosmsg",
+      "version": "1.12.17-1xenial-20201103-042045+0000"
+    },
+    {
+      "name": "ros-kinetic-rosnode",
+      "version": "1.12.17-1xenial-20201103-042808+0000"
+    },
+    {
+      "name": "ros-kinetic-rosout",
+      "version": "1.12.17-1xenial-20201103-024943+0000"
+    },
+    {
+      "name": "ros-kinetic-rospack",
+      "version": "2.4.5-1xenial-20191214-014035+0000"
+    },
+    {
+      "name": "ros-kinetic-rosparam",
+      "version": "1.12.17-1xenial-20201103-022214+0000"
+    },
+    {
+      "name": "ros-kinetic-rospy",
+      "version": "1.12.17-1xenial-20201103-023834+0000"
+    },
+    {
+      "name": "ros-kinetic-rospy-message-converter",
+      "version": "0.5.5-1xenial-20201109-170845+0000"
+    },
+    {
+      "name": "ros-kinetic-rospy-tutorials",
+      "version": "0.7.1-0xenial-20201103-041051+0000"
+    },
+    {
+      "name": "ros-kinetic-rosservice",
+      "version": "1.12.17-1xenial-20201103-042841+0000"
+    },
+    {
+      "name": "ros-kinetic-rostest",
+      "version": "1.12.17-1xenial-20201103-035944+0000"
+    },
+    {
+      "name": "ros-kinetic-rostime",
+      "version": "0.6.11-0xenial-20191214-033908+0000"
+    },
+    {
+      "name": "ros-kinetic-rostopic",
+      "version": "1.12.17-1xenial-20201103-042047+0000"
+    },
+    {
+      "name": "ros-kinetic-rosunit",
+      "version": "1.14.6-1xenial-20201017-190712+0000"
+    },
+    {
+      "name": "ros-kinetic-roswtf",
+      "version": "1.12.17-1xenial-20201103-043906+0000"
+    },
+    {
+      "name": "ros-kinetic-rotate-recovery",
+      "version": "1.14.8-1xenial-20201203-023445+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-action",
+      "version": "0.4.9-0xenial-20201103-052719+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-bag",
+      "version": "0.5.0-1xenial-20201116-172909+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-bag-plugins",
+      "version": "0.5.0-1xenial-20201116-173135+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-common-plugins",
+      "version": "0.4.8-0xenial-20201116-173616+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-console",
+      "version": "0.4.9-1xenial-20201103-050850+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-dep",
+      "version": "0.4.9-0xenial-20201103-051331+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-graph",
+      "version": "0.4.11-1xenial-20201103-043937+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-gui",
+      "version": "0.5.0-0xenial-20201017-222445+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-gui-cpp",
+      "version": "0.5.0-0xenial-20201103-024824+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-gui-py",
+      "version": "0.5.0-0xenial-20201103-033828+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-image-view",
+      "version": "0.4.16-1xenial-20201103-065452+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-launch",
+      "version": "0.4.8-0xenial-20201103-051736+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-logger-level",
+      "version": "0.4.8-0xenial-20201103-044144+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-moveit",
+      "version": "0.5.7-0xenial-20201103-063649+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-msg",
+      "version": "0.4.8-0xenial-20201103-051745+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-nav-view",
+      "version": "0.5.7-0xenial-20201103-063651+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-plot",
+      "version": "0.4.8-0xenial-20201103-050839+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-pose-view",
+      "version": "0.5.8-0xenial-20201103-063713+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-publisher",
+      "version": "0.4.8-0xenial-20201103-051258+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-py-common",
+      "version": "0.5.0-0xenial-20201103-045805+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-py-console",
+      "version": "0.4.8-0xenial-20201103-035015+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-reconfigure",
+      "version": "0.5.3-1xenial-20201103-051755+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-robot-dashboard",
+      "version": "0.5.7-0xenial-20201116-174144+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-robot-monitor",
+      "version": "0.5.13-1xenial-20201116-173248+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-robot-plugins",
+      "version": "0.5.7-0xenial-20201116-174617+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-robot-steering",
+      "version": "0.5.9-0xenial-20201103-051346+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-runtime-monitor",
+      "version": "0.5.7-0xenial-20201103-035047+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-rviz",
+      "version": "0.5.10-0xenial-20201103-094416+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-service-caller",
+      "version": "0.4.8-0xenial-20201103-051308+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-shell",
+      "version": "0.4.9-0xenial-20201103-051404+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-srv",
+      "version": "0.4.8-0xenial-20201103-052729+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-tf-tree",
+      "version": "0.6.0-0xenial-20201103-050007+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-top",
+      "version": "0.4.8-0xenial-20201103-035054+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-topic",
+      "version": "0.4.11-1xenial-20201103-051355+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-web",
+      "version": "0.4.8-0xenial-20201103-035105+0000"
+    },
+    {
+      "name": "ros-kinetic-rqt-wrapper",
+      "version": "0.1.4-0xenial-20201116-174144+0000"
+    },
+    {
+      "name": "ros-kinetic-rviz",
+      "version": "1.12.17-0xenial-20201103-090629+0000"
+    },
+    {
+      "name": "ros-kinetic-rviz-plugin-tutorials",
+      "version": "0.10.5-1xenial-20201103-140950+0000"
+    },
+    {
+      "name": "ros-kinetic-rviz-python-tutorial",
+      "version": "0.10.5-1xenial-20201103-140956+0000"
+    },
+    {
+      "name": "ros-kinetic-self-test",
+      "version": "1.9.3-0xenial-20201103-041657+0000"
+    },
+    {
+      "name": "ros-kinetic-sensor-msgs",
+      "version": "1.12.7-0xenial-20201103-052702+0000"
+    },
+    {
+      "name": "ros-kinetic-shape-msgs",
+      "version": "1.12.7-0xenial-20201017-194940+0000"
+    },
+    {
+      "name": "ros-kinetic-simulators",
+      "version": "1.3.2-0xenial-20201116-174715+0000"
+    },
+    {
+      "name": "ros-kinetic-slam-karto",
+      "version": "0.7.3-0xenial-20201103-055500+0000"
+    },
+    {
+      "name": "ros-kinetic-smach",
+      "version": "2.0.1-0xenial-20191214-041039+0000"
+    },
+    {
+      "name": "ros-kinetic-smach-msgs",
+      "version": "2.0.1-0xenial-20201017-195659+0000"
+    },
+    {
+      "name": "ros-kinetic-smach-ros",
+      "version": "2.0.1-0xenial-20201103-045830+0000"
+    },
+    {
+      "name": "ros-kinetic-smclib",
+      "version": "1.8.3-0xenial-20191214-041046+0000"
+    },
+    {
+      "name": "ros-kinetic-sophus",
+      "version": "0.9.1-0xenial-20201017-071231+0000"
+    },
+    {
+      "name": "ros-kinetic-sparse-bundle-adjustment",
+      "version": "0.3.3-1xenial-20200330-153341+0000"
+    },
+    {
+      "name": "ros-kinetic-srdfdom",
+      "version": "0.4.2-1xenial-20201103-044239+0000"
+    },
+    {
+      "name": "ros-kinetic-stage",
+      "version": "4.1.1-1xenial-20201017-071242+0000"
+    },
+    {
+      "name": "ros-kinetic-stage-ros",
+      "version": "1.7.5-0xenial-20201103-062104+0000"
+    },
+    {
+      "name": "ros-kinetic-std-capabilities",
+      "version": "0.1.0-0xenial-20191214-001034+0000"
+    },
+    {
+      "name": "ros-kinetic-std-msgs",
+      "version": "0.5.11-0xenial-20201017-191210+0000"
+    },
+    {
+      "name": "ros-kinetic-std-srvs",
+      "version": "1.11.2-0xenial-20201017-191228+0000"
+    },
+    {
+      "name": "ros-kinetic-stdr-gui",
+      "version": "0.3.2-0xenial-20201103-062139+0000"
+    },
+    {
+      "name": "ros-kinetic-stdr-msgs",
+      "version": "0.3.2-0xenial-20201017-195336+0000"
+    },
+    {
+      "name": "ros-kinetic-stdr-parser",
+      "version": "0.3.2-0xenial-20201103-025100+0000"
+    },
+    {
+      "name": "ros-kinetic-stdr-resources",
+      "version": "0.3.2-0xenial-20191214-040234+0000"
+    },
+    {
+      "name": "ros-kinetic-stdr-robot",
+      "version": "0.3.2-0xenial-20201103-060928+0000"
+    },
+    {
+      "name": "ros-kinetic-stdr-server",
+      "version": "0.3.2-0xenial-20201103-055911+0000"
+    },
+    {
+      "name": "ros-kinetic-stereo-image-proc",
+      "version": "1.12.23-0xenial-20201103-115106+0000"
+    },
+    {
+      "name": "ros-kinetic-stereo-msgs",
+      "version": "1.12.7-0xenial-20201103-082830+0000"
+    },
+    {
+      "name": "ros-kinetic-tf",
+      "version": "1.11.9-0xenial-20201103-054008+0000"
+    },
+    {
+      "name": "ros-kinetic-tf-conversions",
+      "version": "1.11.9-0xenial-20201103-114806+0000"
+    },
+    {
+      "name": "ros-kinetic-tf2",
+      "version": "0.5.20-0xenial-20201017-203527+0000"
+    },
+    {
+      "name": "ros-kinetic-tf2-eigen",
+      "version": "0.5.20-0xenial-20201017-210101+0000"
+    },
+    {
+      "name": "ros-kinetic-tf2-geometry-msgs",
+      "version": "0.5.20-0xenial-20201103-050736+0000"
+    },
+    {
+      "name": "ros-kinetic-tf2-kdl",
+      "version": "0.5.20-0xenial-20201103-231455+0000"
+    },
+    {
+      "name": "ros-kinetic-tf2-msgs",
+      "version": "0.5.20-0xenial-20201017-194408+0000"
+    },
+    {
+      "name": "ros-kinetic-tf2-py",
+      "version": "0.5.20-0xenial-20201103-034128+0000"
+    },
+    {
+      "name": "ros-kinetic-tf2-ros",
+      "version": "0.5.20-0xenial-20201103-044823+0000"
+    },
+    {
+      "name": "ros-kinetic-theora-image-transport",
+      "version": "1.9.5-0xenial-20201103-055643+0000"
+    },
+    {
+      "name": "ros-kinetic-topic-tools",
+      "version": "1.12.17-1xenial-20201103-040350+0000"
+    },
+    {
+      "name": "ros-kinetic-trajectory-msgs",
+      "version": "1.12.7-0xenial-20201017-195034+0000"
+    },
+    {
+      "name": "ros-kinetic-transmission-interface",
+      "version": "0.13.5-1xenial-20201103-041501+0000"
+    },
+    {
+      "name": "ros-kinetic-turtle-actionlib",
+      "version": "0.1.10-0xenial-20201103-044842+0000"
+    },
+    {
+      "name": "ros-kinetic-turtle-tf",
+      "version": "0.2.2-0xenial-20201103-055952+0000"
+    },
+    {
+      "name": "ros-kinetic-turtle-tf2",
+      "version": "0.2.2-0xenial-20201103-045928+0000"
+    },
+    {
+      "name": "ros-kinetic-turtlebot-bringup",
+      "version": "2.4.2-0xenial-20210201-144403-0800"
+    },
+    {
+      "name": "ros-kinetic-turtlebot-capabilities",
+      "version": "2.4.2-0xenial-20201103-070747+0000"
+    },
+    {
+      "name": "ros-kinetic-turtlebot-description",
+      "version": "2.4.2-0xenial-20210503-154807-0800"
+    },
+    {
+      "name": "ros-kinetic-turtlebot-gazebo",
+      "version": "2.2.3-0xenial-20210506-084046-0800"
+    },
+    {
+      "name": "ros-kinetic-turtlebot-navigation",
+      "version": "2.3.7-0xenial-20210506-083528-0800"
+    },
+    {
+      "name": "ros-kinetic-turtlesim",
+      "version": "0.7.1-0xenial-20201103-023141+0000"
+    },
+    {
+      "name": "ros-kinetic-unique-id",
+      "version": "1.0.5-0xenial-20201103-024118+0000"
+    },
+    {
+      "name": "ros-kinetic-universal-robot",
+      "version": "1.2.7-1xenial-20210503-174504-0800"
+    },
+    {
+      "name": "ros-kinetic-universal-robots",
+      "version": "1.2.7-1xenial-20210205-220454-0800"
+    },
+    {
+      "name": "ros-kinetic-ur-bringup",
+      "version": "1.2.7-1xenial-20210205-220239-0800"
+    },
+    {
+      "name": "ros-kinetic-ur-description",
+      "version": "1.2.7-1xenial-20210205-213442-0800"
+    },
+    {
+      "name": "ros-kinetic-ur-driver",
+      "version": "1.2.7-1xenial-20201103-064305+0000"
+    },
+    {
+      "name": "ros-kinetic-ur-e-description",
+      "version": "1.2.7-1xenial-20210205-213500-0800"
+    },
+    {
+      "name": "ros-kinetic-ur-e-gazebo",
+      "version": "1.2.7-1xenial-20210205-220255-0800"
+    },
+    {
+      "name": "ros-kinetic-ur-gazebo",
+      "version": "1.2.7-1xenial-20210205-220233-0800"
+    },
+    {
+      "name": "ros-kinetic-ur-kinematics",
+      "version": "1.2.7-1xenial-20201104-011501+0000"
+    },
+    {
+      "name": "ros-kinetic-ur-msgs",
+      "version": "1.2.7-1xenial-20201017-192812+0000"
+    },
+    {
+      "name": "ros-kinetic-ur10-e-moveit-config",
+      "version": "1.2.7-1xenial-20210205-215941-0800"
+    },
+    {
+      "name": "ros-kinetic-ur10-moveit-config",
+      "version": "1.2.7-1xenial-20210205-215944-0800"
+    },
+    {
+      "name": "ros-kinetic-ur3-e-moveit-config",
+      "version": "1.2.7-1xenial-20210205-215949-0800"
+    },
+    {
+      "name": "ros-kinetic-ur3-moveit-config",
+      "version": "1.2.7-1xenial-20210205-215952-0800"
+    },
+    {
+      "name": "ros-kinetic-ur5-e-moveit-config",
+      "version": "1.2.7-1xenial-20210205-215956-0800"
+    },
+    {
+      "name": "ros-kinetic-ur5-moveit-config",
+      "version": "1.2.7-1xenial-20210205-215958-0800"
+    },
+    {
+      "name": "ros-kinetic-urdf",
+      "version": "1.12.12-0xenial-20201103-040423+0000"
+    },
+    {
+      "name": "ros-kinetic-urdf-parser-plugin",
+      "version": "1.12.12-0xenial-20191214-002655+0000"
+    },
+    {
+      "name": "ros-kinetic-urdf-tutorial",
+      "version": "0.3.0-1xenial-20201103-234947+0000"
+    },
+    {
+      "name": "ros-kinetic-urdfdom-py",
+      "version": "0.3.3-0xenial-20201017-071250+0000"
+    },
+    {
+      "name": "ros-kinetic-urg-c",
+      "version": "1.0.405-0xenial-20191214-001959+0000"
+    },
+    {
+      "name": "ros-kinetic-urg-node",
+      "version": "0.1.15-1xenial-20201103-055353+0000"
+    },
+    {
+      "name": "ros-kinetic-uuid-msgs",
+      "version": "1.0.5-0xenial-20201017-200028+0000"
+    },
+    {
+      "name": "ros-kinetic-vision-opencv",
+      "version": "1.12.8-0xenial-20201103-083340+0000"
+    },
+    {
+      "name": "ros-kinetic-visualization-marker-tutorials",
+      "version": "0.10.5-1xenial-20201103-025158+0000"
+    },
+    {
+      "name": "ros-kinetic-visualization-msgs",
+      "version": "1.12.7-0xenial-20201017-195138+0000"
+    },
+    {
+      "name": "ros-kinetic-visualization-tutorials",
+      "version": "0.10.5-1xenial-20201103-142234+0000"
+    },
+    {
+      "name": "ros-kinetic-viz",
+      "version": "1.3.2-0xenial-20201116-174743+0000"
+    },
+    {
+      "name": "ros-kinetic-voxel-grid",
+      "version": "1.14.8-1xenial-20201103-025209+0000"
+    },
+    {
+      "name": "ros-kinetic-warehouse-ros",
+      "version": "0.9.4-1xenial-20201103-231455+0000"
+    },
+    {
+      "name": "ros-kinetic-webkit-dependency",
+      "version": "1.1.0-0xenial-20191214-040609+0000"
+    },
+    {
+      "name": "ros-kinetic-world-canvas-msgs",
+      "version": "0.2.0-1xenial-20201017-200924+0000"
+    },
+    {
+      "name": "ros-kinetic-world-canvas-server",
+      "version": "0.2.0-0xenial-20201103-232356+0000"
+    },
+    {
+      "name": "ros-kinetic-world-canvas-utils",
+      "version": "0.2.0-0xenial-20201103-034315+0000"
+    },
+    {
+      "name": "ros-kinetic-xacro",
+      "version": "1.11.3-0xenial-20201103-043644+0000"
+    },
+    {
+      "name": "ros-kinetic-xmlrpcpp",
+      "version": "1.12.17-1xenial-20201103-021451+0000"
+    },
+    {
+      "name": "ros-kinetic-yocs-cmd-vel-mux",
+      "version": "0.8.2-0xenial-20201103-045054+0000"
+    },
+    {
+      "name": "ros-kinetic-yocs-controllers",
+      "version": "0.8.2-0xenial-20201103-025239+0000"
+    },
+    {
+      "name": "ros-kinetic-yocs-velocity-smoother",
+      "version": "0.8.2-0xenial-20201103-045054+0000"
+    },
+    {
+      "name": "ros-kinetic-zeroconf-avahi",
+      "version": "0.2.3-0xenial-20201103-023252+0000"
+    },
+    {
+      "name": "ros-kinetic-zeroconf-msgs",
+      "version": "0.2.1-0xenial-20201017-200246+0000"
+    },
+    {
+      "name": "system-config-printer-udev",
+      "version": "1.5.7+20160212-0ubuntu2"
+    },
+    {
+      "name": "udev",
+      "version": "229-4ubuntu21.29"
+    }
+  ],
+  "platform": "Ubuntu 16.04.7 LTS amd64",
+  "ros": "Kinetic",
+  "python": "2.7.12"
+}
