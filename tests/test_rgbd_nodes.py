@@ -1,6 +1,7 @@
 """Follower/gate adapters with ROS doubles; real navigation is not simulated."""
 import copy
 import json
+import math
 import os
 import sys
 import unittest
@@ -196,6 +197,192 @@ class NodeTests(unittest.TestCase):
         n.step()
         self.assertEqual(n.failed, 'navigation_failed_reset_required')
         n.allowed.publish.assert_called_with(False)
+
+    def test_field_navigation_retry_requires_new_map_and_selects_another_goal(self):
+        n = self.follower()
+        n.c.update(navigation_retry_delay=.8, detour_max_extra_distance=.6, standoff_min_distance=.8)
+        n.goal = (2., 2., 0.)
+        n.on_navigation_done(4, None)
+        self.assertIsNone(n.failed)
+        n.step()
+        n.status.publish.assert_called_with('navigation_retry_wait')
+        n.client.send_goal.assert_not_called()
+        self.wall += .9
+        n.target_received = n.valid_received = n.mission_received = n.grid_received = self.wall
+        n.odometry.received = self.wall
+        n.step()
+        n.status.publish.assert_called_with('navigation_retry_wait')
+        n.grid_stamp += .001
+        self.now += .001
+        n.step()
+        self.assertIsNone(n.failed)
+        goal = n.client.send_goal.call_args[0][0].target_pose.pose.position
+        self.assertGreaterEqual(((goal.x-2.)**2+(goal.y-2.)**2)**.5, .15)
+
+    def test_field_retry_does_not_override_estop_or_lost_action_connection(self):
+        n = self.follower()
+        n.c['navigation_retry_delay'] = .8
+        n.goal = (2.,2.,0.)
+        n.on_navigation_done(4, None)
+        n.estop = True
+        n.step()
+        n.status.publish.assert_called_with('mission_stopped')
+        n.client.send_goal.assert_not_called()
+        n.on_navigation_done(9,None)
+        self.assertEqual(n.failed, 'navigation_failed_reset_required')
+
+    def test_field_clear_endpoint_still_uses_reachable_approach(self):
+        from unittest.mock import patch
+        n = self.follower()
+        n.c.update(detour_max_extra_distance=.6, standoff_min_distance=.8)
+        self.assertTrue(n.grid.clear(2., 2., n.c['footprint_radius']))
+        with patch.object(self.follow_module, 'reachable_standoff',
+                          return_value=((1.7, 2.1, 0.), True)) as planner:
+            n.step()
+        planner.assert_called_once()
+        goal = n.client.send_goal.call_args[0][0].target_pose.pose.position
+        self.assertAlmostEqual(goal.x, 1.7)
+        self.assertAlmostEqual(goal.y, 2.1)
+
+    def test_obsolete_goal_callback_cannot_abort_a_new_goal(self):
+        n = self.follower()
+        n.goal_sequence = 2
+        n.on_navigation_done(4, None, sequence=1)
+        self.assertIsNone(n.failed)
+
+    def test_persistent_visibility_veto_replans_instead_of_repeating_same_turn(self):
+        n = self.follower()
+        n.c['navigation_retry_delay'] = .8
+        n.goal = (2., 2., 0.)
+        for unused in range(25):
+            self.advance_follower(n)
+            n.on_gate(self.NS(data='visibility_path_blocked'))
+            n.step()
+            if getattr(n, 'retry_pending', False):
+                break
+        self.assertTrue(n.retry_pending)
+        self.assertIsNone(n.failed)
+        self.assertEqual(n.failed_goal, (2., 2., 0.))
+        n.client.cancel_goal.assert_called_once()
+        n.allowed.publish.assert_called_with(False)
+        n.status.publish.assert_called_with('navigation_retry_no_progress')
+
+    def advance_follower(self, n, elapsed=.1, position=None, heading=None):
+        self.wall += elapsed
+        self.now += elapsed
+        n.target_stamp = n.grid_stamp = n.odometry.stamp = self.now
+        n.target_received = n.valid_received = n.mission_received = n.grid_received = self.wall
+        n.odometry.received = self.wall
+        transform = n.buffer.lookup_transform.return_value
+        transform.header.stamp = self.Stamp(self.now)
+        if position is not None:
+            transform.transform.translation.x, transform.transform.translation.y = position
+        if heading is not None:
+            transform.transform.rotation.z = math.sin(heading/2.)
+            transform.transform.rotation.w = math.cos(heading/2.)
+
+    def test_intermittent_gate_slowdown_cannot_hide_a_stationary_goal(self):
+        n = self.follower()
+        n.c['navigation_retry_delay'] = .8
+        n.goal = (2., 2., 0.)
+        for index in range(50):
+            self.advance_follower(n)
+            # Regression for the field v=.01,w=-.09 friction stall: occasional
+            # healthy status messages must not reset all slowdown evidence.
+            reason = 'visibility_or_clearance_slowdown' if index % 2 == 0 else 'shadow_velocity_only'
+            n.on_gate(self.NS(data=reason))
+            n.step()
+            if getattr(n, 'retry_pending', False):
+                break
+        self.assertTrue(n.retry_pending)
+        self.assertEqual(n.excluded_goals[-1][0], (2., 2., 0.))
+        n.client.cancel_goal.assert_called_once()
+        self.assertIsNone(n.failed)
+
+    def test_slow_translation_or_real_inplace_rotation_is_useful_progress(self):
+        for motion in ('translation', 'rotation'):
+            n = self.follower()
+            n.c['navigation_retry_delay'] = .8
+            n.goal = (2., 2., 0.)
+            for index in range(50):
+                self.advance_follower(n, position=(1.5+.003*index, 2.) if motion == 'translation' else None,
+                                      heading=.01*index if motion == 'rotation' else None)
+                n.on_gate(self.NS(data='visibility_or_clearance_slowdown'))
+                n.step()
+            n.client.cancel_goal.assert_not_called()
+            self.assertFalse(getattr(n, 'retry_pending', False))
+
+    def test_normal_gap_or_arrived_goal_wait_is_not_a_friction_stall(self):
+        for waiting in ('gap', 'arrived'):
+            n = self.follower()
+            n.c['navigation_retry_delay'] = .8
+            n.goal = (2., 2., 0.)
+            if waiting == 'gap':
+                n.target = (2.5, 2.)
+            else:
+                n.client.get_state.return_value = 3
+            for unused in range(30):
+                self.advance_follower(n)
+                n.on_gate(self.NS(data='visibility_or_clearance_slowdown'))
+                n.step()
+            n.client.cancel_goal.assert_not_called()
+            self.assertFalse(getattr(n, 'retry_pending', False))
+
+    def test_no_progress_retry_requires_fresh_gate_evidence(self):
+        n = self.follower()
+        n.c['navigation_retry_delay'] = .8
+        n.goal = (2., 2., 0.)
+        n.progress_anchor = (1.5,2.,0.)
+        n.gate_limited_seconds = 3.
+        n.gate_last_limited = self.wall
+        n.gate_received = self.wall-1.
+        n.step()
+        n.client.cancel_goal.assert_not_called()
+        self.assertFalse(getattr(n, 'retry_pending', False))
+
+    def test_transient_visibility_veto_does_not_cancel_goal(self):
+        n = self.follower()
+        n.c['navigation_retry_delay'] = .8
+        n.goal = (2., 2., 0.)
+        n.on_gate(self.NS(data='visibility_path_blocked'))
+        self.wall += .3
+        n.on_gate(self.NS(data='shadow_velocity_only'))
+        self.wall += 1.
+        n.on_gate(self.NS(data='visibility_path_blocked'))
+        n.client.cancel_goal.assert_not_called()
+
+    def test_reached_detour_is_excluded_and_old_exclusions_expire(self):
+        n = self.follower()
+        n.goal, n.goal_is_detour = (1.5, 2., 0.), True
+        n.step()
+        self.assertEqual(n.excluded_goals[0][0], (1.5, 2., 0.))
+        n.excluded_goals[0] = (n.excluded_goals[0][0], self.wall-11., n.target)
+        n.step()
+        self.assertEqual(n.excluded_goals, [])
+
+    def test_usable_alternate_goal_is_held_but_a_moving_target_releases_it(self):
+        n = self.follower()
+        n.c['detour_goal_hold'] = 3.
+        n.goal, n.goal_time = (2., 1.7, 0.), self.wall-1.
+        n.goal_is_alternate, n.goal_is_detour = True, False
+        n.goal_target_anchor = n.target
+        n.step()
+        n.client.send_goal.assert_not_called()
+        n.target = (3.2, 2.)
+        n.step()
+        n.client.send_goal.assert_called_once()
+
+    def test_goal_hold_never_reuses_a_newly_blocked_endpoint(self):
+        n = self.follower()
+        n.c['detour_goal_hold'] = 3.
+        n.goal, n.goal_time = (2., 1.7, 0.), self.wall-1.
+        n.goal_is_alternate, n.goal_is_detour = True, False
+        n.goal_target_anchor = n.target
+        n.grid = self.Mock()
+        n.grid.clear.side_effect = lambda x, y, radius: y > 1.9
+        n.step()
+        n.client.send_goal.assert_called_once()
+        self.assertEqual(n.goal[:2], (2., 2.))
 
     def test_terminal_callback_latches_failure_even_after_goal_cancel(self):
         n = self.follower()
@@ -408,6 +595,11 @@ class NodeTests(unittest.TestCase):
                 n.callback(*messages)
             n.pub.publish.assert_called_once()
             n.valid.publish.assert_called_with(True)
+            evidence = json.loads(n.status.publish.call_args[0][0].data)
+            self.assertEqual(evidence['selected_candidate'], 0)
+            self.assertEqual(evidence['candidate_sources'], [['color']])
+            self.assertGreaterEqual(evidence['detection_seconds'], 0.)
+            self.assertGreaterEqual(evidence['observation_age_seconds'], 0.)
             target = n.pub.publish.call_args[0][0]
             self.assertEqual(target.header.frame_id, 'odom')
             self.assertAlmostEqual(target.pose.position.x, 2.7, places=5)

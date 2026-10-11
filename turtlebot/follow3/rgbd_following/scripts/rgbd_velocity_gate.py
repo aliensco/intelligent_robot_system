@@ -3,6 +3,7 @@
 """Wall-clock watchdog + swept costmap footprint check, sole velocity output."""
 import threading
 import time
+import math
 import rospy
 import tf2_ros
 from geometry_msgs.msg import Twist, PoseStamped
@@ -14,6 +15,25 @@ from rgbd_following_core.motion import fresh, swept_clear, stopping_clear
 from rgbd_following_core.visibility import visible_path
 from rgbd_following_core.settings import validate
 from rgbd_following_core.ros_helpers import grid_message, transform_pose, same_frame, OdometryState
+
+
+def horizontal_image_offset(pose, target, camera, optical):
+    """Measured target's offset from the principal ray, inside actual pixels."""
+    x, y, heading = pose
+    dx, dy = target[0]-x, target[1]-y
+    bx, by, bz = math.cos(heading)*dx+math.sin(heading)*dy, -math.sin(heading)*dx+math.cos(heading)*dy, target[2]
+    t, (qx,qy,qz,qw) = optical
+    ux, uy, uz = 2*(qy*bz-qz*by), 2*(qz*bx-qx*bz), 2*(qx*by-qy*bx)
+    px = bx+qw*ux+qy*uz-qz*uy+t[0]
+    py = by+qw*uy+qz*ux-qx*uz+t[1]
+    pz = bz+qw*uz+qx*uy-qy*ux+t[2]
+    if pz <= 0 or not all(finite(value) for value in (px,py,pz)):
+        return None
+    fx,fy,cx,cy,width,height = camera
+    u, v = fx*px/pz+cx, fy*py/pz+cy
+    if not 1 <= u <= width-2 or not 1 <= v <= height-2:
+        return None
+    return (u-cx)/width
 
 
 class Gate(object):
@@ -115,6 +135,8 @@ class Gate(object):
 
     def output(self):
         c, wall, now = self.c, self.clock(), rospy.Time.now().to_sec()
+        was_recentering = getattr(self, 'auto_recenter_active', False)
+        self.auto_recenter_active = False
         zero = Twist()
         self.reason = 'permission_or_command_stale'
         if (self.estop or not self.allowed or not self.target_valid or
@@ -176,6 +198,54 @@ class Gate(object):
         if (abs(self.odometry.lateral) > c['stopped_linear'] or
                 not measured_visible):
             return zero
+        # DWA can keep asking for a translating curve while the target is at
+        # the image edge. Scaling that curve either remains invisible or falls
+        # below the real base's starting speed. Produce a separate, fully
+        # checked in-place recovery instead of waiting for DWA to propose v=0.
+        full_horizon = max(c['visibility']['horizon'], c['reaction_time'] +
+                           max(abs(v)/c['braking_acceleration'], abs(w)/c['angular_braking_acceleration']))
+        physically_stopped = (self.odometry.speed <= c['stopped_linear'] and
+                              self.odometry.angular <= c['stopped_angular'])
+        before = horizontal_image_offset(pose, self.observation, self.camera, extrinsic)
+        normalized_u = before+self.camera[2]/self.camera[4] if before is not None else None
+        near_edge = (normalized_u is not None and
+                     min(normalized_u,1.-normalized_u) <= 2*c['visibility']['margin'])
+        if (v > 1e-6 and recovery_ready and
+                near_edge and (physically_stopped or was_recentering) and
+                not visible_path(pose, self.observation, v, w, self.camera, extrinsic,
+                                 full_horizon, c['visibility']['margin'])):
+            rotations = []
+            for scale in (1., .6, .3):
+                for direction in (-1., 1.):
+                    turn = direction*c['max_angular']*scale
+                    horizon = max(c['visibility']['horizon'], c['reaction_time'] +
+                                  abs(turn)/c['angular_braking_acceleration'])
+                    end_pose = (pose[0],pose[1],pose[2]+turn*horizon)
+                    after = horizontal_image_offset(end_pose, self.observation, self.camera, extrinsic)
+                    if before is None or after is None or abs(after) >= abs(before)-1e-3:
+                        continue
+                    # No new image-margin violation, no worsening of an
+                    # existing one, and an actual improvement toward the image
+                    # centre. Every intermediate projection is checked.
+                    if not visible_path(pose, self.observation, 0., turn, self.camera, extrinsic,
+                                        horizon, c['visibility']['margin'], recovery=True,
+                                        require_progress=False):
+                        continue
+                    rotations.append((abs(after),turn))
+            for unused,turn in sorted(rotations):
+                self.reason = 'measured_stopping_envelope_blocked'
+                if not stopping_clear(self.grid, pose, self.odometry.speed, 0., c['footprint_radius'],
+                                      c['braking_acceleration'], c['reaction_time']):
+                    continue
+                self.reason = 'swept_footprint_blocked'
+                if not swept_clear(self.grid, pose, 0., turn, c['footprint_radius'],
+                                   c['braking_acceleration'], c['reaction_time']):
+                    continue
+                self.auto_recenter_active = True
+                self.reason = 'visibility_recenter' if self.execute else 'shadow_visibility_recenter'
+                out = Twist()
+                out.angular.z = turn
+                return out
         # Uniform scaling preserves curvature; every candidate is rechecked.
         # A future camera pose is evaluated with the current observed target.
         # This is a local visibility constraint, not an occlusion predictor.

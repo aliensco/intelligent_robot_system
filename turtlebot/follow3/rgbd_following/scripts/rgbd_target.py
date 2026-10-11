@@ -49,10 +49,14 @@ class Target(object):
     def reject(self, reason):
         self.tracker.miss(reason)
         self.valid.publish(False)
-        self.status.publish(String(data=json.dumps(dict(reason=reason, target_valid=False))))
+        evidence = dict(reason=reason, target_valid=False)
+        if self.last_pair is not None:
+            evidence.update(zip(('rgb_stamp', 'depth_stamp', 'info_stamp'), self.last_pair))
+        self.status.publish(String(data=json.dumps(evidence)))
 
     def callback(self, rgb, depth, info):
         with self.lock:
+            processing_started = self.clock()
             try:
                 cfg, p = self.config, self.config['perception']
                 stamps = [m.header.stamp.to_sec() for m in (rgb, depth, info)]
@@ -90,7 +94,9 @@ class Target(object):
                 self.clearing.publish(clearing_msg)
                 if insufficient:
                     return
+                detection_started = self.clock()
                 candidates, mask = detect(image, d, camera, p)
+                detection_seconds = self.clock()-detection_started
                 tf = self.buffer.lookup_transform(self.frame, depth.header.frame_id, depth.header.stamp, rospy.Duration(.05))
                 t, q = tf.transform.translation, tf.transform.rotation
                 positions = transform_points([c['point'] for c in candidates], (t.x, t.y, t.z), (q.x, q.y, q.z, q.w))
@@ -98,6 +104,8 @@ class Target(object):
                                                [c['identity_verified'] for c in candidates])
                 if not fresh(min(stamps), rospy.Time.now().to_sec(), cfg['target_timeout']):
                     return self.reject('processing_too_slow')
+                selected_index = next((i for i, position in enumerate(positions)
+                                       if selected is not None and tuple(position) == selected), None)
                 if selected is not None:
                     msg = PoseStamped()
                     msg.header.frame_id, msg.header.stamp = self.frame, depth.header.stamp
@@ -107,14 +115,29 @@ class Target(object):
                 self.valid.publish(selected is not None)
                 self.status.publish(String(data=json.dumps(dict(reason=self.tracker.reason,
                     target_valid=selected is not None, candidates=len(candidates), stamp=stamps[1],
+                    rgb_stamp=stamps[0], depth_stamp=stamps[1], info_stamp=stamps[2],
+                    processing_seconds=self.clock()-processing_started,
+                    detection_seconds=detection_seconds,
+                    observation_age_seconds=rospy.Time.now().to_sec()-min(stamps),
+                    selected_candidate=selected_index,
                     identity_calibrated=cfg['identity_calibrated'], reacquired=self.tracker.reacquired,
                     obstacle_points=len(points), clearing_points=len(clearing),
+                    candidate_boxes=[[int(v) for v in c['bbox']] for c in candidates],
+                    candidate_points=[[float(v) for v in c['point']] for c in candidates],
+                    candidate_verified=[bool(c['identity_verified']) for c in candidates],
+                    candidate_sources=[c.get('sources', [c.get('feature', {}).get('kind', 'color')])
+                                       for c in candidates],
                     identity_scores=[c['identity_score'] for c in candidates]))))
                 view = image.copy()
-                for candidate in candidates:
+                for index, candidate in enumerate(candidates):
                     x, y, w, h = candidate['bbox']
-                    cv2.rectangle(view, (x, y), (x+w, y+h), (0, 200, 255), 2)
+                    # Yellow means a candidate, not a confirmed followed robot.
+                    color = (0, 230, 0) if index == selected_index else (0, 200, 255)
+                    cv2.rectangle(view, (x, y), (x+w, y+h), color, 2)
                 cv2.putText(view, self.tracker.reason, (10, 25), cv2.FONT_HERSHEY_SIMPLEX, .6, (0, 255, 255), 1)
+                cv2.putText(view, 'detect %.0f ms | age %.0f ms' %
+                            (detection_seconds*1000., (rospy.Time.now().to_sec()-min(stamps))*1000.),
+                            (10, 47), cv2.FONT_HERSHEY_SIMPLEX, .45, (0, 255, 255), 1)
                 preview = self.bridge.cv2_to_imgmsg(view, 'bgr8')
                 preview.header = rgb.header
                 self.preview.publish(preview)

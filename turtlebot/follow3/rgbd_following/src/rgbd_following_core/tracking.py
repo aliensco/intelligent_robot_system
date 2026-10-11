@@ -33,6 +33,7 @@ class Tracker(object):
         self.pending = self.pending_stamp = None
         self.pending_count = 0
         self.pending_strong = None
+        self.pending_near = False
         self.reacquired = False
 
     def miss(self, reason='target_lost'):
@@ -40,6 +41,7 @@ class Tracker(object):
         self.pending = self.pending_stamp = None
         self.pending_count = 0
         self.pending_strong = None
+        self.pending_near = False
         self.reason = reason
         return None
 
@@ -84,21 +86,33 @@ class Tracker(object):
             if len(eligible) != 1:
                 return self.miss('ambiguous_target' if len(eligible) > 1 else 'target_lost')
             selected, strong = eligible[0]
-            if (self.pending is None or self.pending_strong != strong or
+            near = distance(selected, self.anchor) <= min(self.reacquire_radius, reachable)
+            # Different RGB/depth modes can cross their verified-score cutoffs
+            # while measuring the same nearby object. Keep that continuous
+            # track, using the longer confirmation count if either was strong.
+            # Outside the normal radius, only consecutive strong evidence can
+            # justify the enlarged search region, exactly as before.
+            continuous_near = self.pending_near and near
+            if (self.pending is None or
+                    (self.pending_strong != strong and not continuous_near) or
+                    (self.pending_near and not near) or
                     stamp-self.pending_stamp > self.timeout or
                     distance(selected, self.pending) > self.jitter+self.speed*(stamp-self.pending_stamp)):
                 self.pending_count = 0
+                self.pending_strong = strong
             self.pending, self.pending_stamp = selected, stamp
-            self.pending_strong = strong
+            self.pending_strong = self.pending_strong or strong
+            self.pending_near = near
             self.pending_count += 1
             self.reason = 'reconfirming_identity'
-            if self.pending_count < (self.reacquire_confirmations if strong else self.confirmations):
+            if self.pending_count < (self.reacquire_confirmations if self.pending_strong else self.confirmations):
                 return None
             self.anchor, self.stamp = selected, stamp
             self.count = self.confirmations
             self.pending = self.pending_stamp = None
             self.pending_count = 0
             self.pending_strong = None
+            self.pending_near = False
             self.reason, self.reacquired = 'tracking', True
             return selected
         if self.anchor is None:

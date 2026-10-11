@@ -39,13 +39,29 @@ class ReacquisitionTests(unittest.TestCase):
             self.assertIsNone(self.update(tracker, 1.5, 3.4 + index * .1, True))
         self.assertEqual(self.update(tracker, 1.5, 3.9, True), (1.5, 0., .3))
 
-    def test_strong_frames_do_not_shortcut_normal_confirmation(self):
+    def test_near_modality_switch_keeps_longer_confirmation_requirement(self):
         tracker = self.tracker()
         for index in range(3):
             self.assertIsNone(self.update(tracker, 1.1, 3. + index * .1, True))
-        for index in range(3):
+        for index in range(2):
             self.assertIsNone(self.update(tracker, 1.1, 3.3 + index * .1, False))
-        self.assertEqual(self.update(tracker, 1.1, 3.6, False), (1.1, 0., .3))
+        self.assertEqual(self.update(tracker, 1.1, 3.5, False), (1.1, 0., .3))
+
+    def test_near_rgb_depth_strength_alternation_can_reacquire(self):
+        tracker = self.tracker()
+        for index in range(5):
+            self.assertIsNone(self.update(tracker, 1.1, 3.+index*.1, index % 2 == 0))
+            self.assertEqual(tracker.anchor, (1.,0.,.3))
+        self.assertEqual(self.update(tracker, 1.1, 3.5, False),(1.1,0.,.3))
+        self.assertTrue(tracker.reacquired)
+
+    def test_near_mixed_streak_cannot_shortcut_far_strong_recovery(self):
+        tracker = self.tracker()
+        for index in range(5):
+            self.assertIsNone(self.update(tracker, 1.1, 3.+index*.1, index % 2 == 0))
+        for index in range(5):
+            self.assertIsNone(self.update(tracker, 1.5, 3.5+index*.1, True))
+        self.assertEqual(self.update(tracker, 1.5, 4., True),(1.5,0.,.3))
 
     def test_strong_distractor_outside_identity_radius_does_not_block(self):
         tracker = self.tracker()

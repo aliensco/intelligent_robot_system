@@ -45,6 +45,9 @@ def validate(config, execute=False):
     if config['max_linear'] > .3 or config['max_angular'] > .8:
         raise ValueError('Competition speed limit exceeded')
     p = config['perception']
+    for key in ('detour_max_extra_distance', 'navigation_retry_delay', 'detour_goal_hold'):
+        if key in config:
+            positive(config, (key,))
     if 'standoff_min_distance' in config:
         if not config['minimum_distance'] < config['standoff_min_distance'] <= config['follow_distance']:
             raise ValueError('Standoff minimum must exceed stop distance and not exceed desired gap')

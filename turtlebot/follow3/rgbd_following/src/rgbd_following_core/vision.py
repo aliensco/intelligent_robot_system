@@ -80,9 +80,11 @@ def detect(rgb, depth_m, camera, config):
     if config.get('proposal_mode', 'color') == 'depth_body':
         from .body import detect_body
         candidates, mask = detect_body(rgb, depth_m, camera, config)
-        if not candidates and config.get('rgb_templates'):
+        if config.get('rgb_templates'):
             from .rgb_templates import detect_templates
-            return detect_templates(rgb, depth_m, camera, config)
+            visual, visual_mask = detect_templates(rgb, depth_m, camera, config)
+            return fuse_body_templates(candidates, visual, depth_m,
+                                       config['min_depth_samples']), mask | visual_mask
         return candidates, mask
     hsv = cv2.cvtColor(rgb, cv2.COLOR_BGR2HSV)
     mask = np.zeros(depth_m.shape, dtype=np.uint8)
@@ -130,3 +132,67 @@ def detect(rgb, depth_m, camera, config):
                                identity_verified=bool(identity['references']) and score <= identity['reacquire_distance'],
                                valid_ratio=summary['valid_ratio']))
     return candidates, mask
+
+
+def fuse_body_templates(bodies, templates, depth=None, min_shared_samples=30):
+    """Merge only unique RGB/depth detections of the same measured body.
+
+    Each modality may see a different robot, so one cannot suppress the other
+    wholesale. Ambiguous many-to-one overlaps remain separate for the tracker.
+    The RGB box gives a stable body centre when black depth pixels are sparse;
+    its range is still measured, never inferred from template scale.
+    """
+    matches = []
+    for body in bodies:
+        x, y, w, h = body['bbox']
+        compatible = []
+        for index, visual in enumerate(templates):
+            a, b, c, d = visual['bbox']
+            intersection = max(0, min(x+w, a+c)-max(x, a))*max(0, min(y+h, b+d)-max(y, b))
+            delta = np.asarray(body['point'])-np.asarray(visual['point'])
+            overlapping = intersection/float(min(w*h, c*d)) > .60
+            if not overlapping and intersection and depth is not None:
+                # Black-base depth holes move the body proposal up into the
+                # shelves while its RGB template retains the whole base. Use
+                # the actual shared measured surface, not a wider association
+                # distance or an unconditional box-overlap relaxation.
+                body_patch = depth[y:y+h,x:x+w]
+                visual_patch = depth[b:b+d,a:a+c]
+                body_good = (np.isfinite(body_patch) &
+                             (np.abs(np.nan_to_num(body_patch)-body['depth']) <= .10))
+                visual_good = (np.isfinite(visual_patch) &
+                               (np.abs(np.nan_to_num(visual_patch)-visual['depth']) <= .10))
+                left, top = max(x,a), max(y,b)
+                right, bottom = min(x+w,a+c), min(y+h,b+d)
+                measured = depth[top:bottom,left:right]
+                shared = (np.isfinite(measured) &
+                          (np.abs(np.nan_to_num(measured)-body['depth']) <= .10) &
+                          (np.abs(np.nan_to_num(measured)-visual['depth']) <= .10))
+                smaller = min(int(body_good.sum()),int(visual_good.sum()))
+                overlapping = (int(shared.sum()) >= min_shared_samples and smaller > 0 and
+                               float(shared.sum())/smaller > .65)
+            if (abs(body['depth']-visual['depth']) <= .10 and
+                    float(np.linalg.norm(delta)) <= .12 and
+                    overlapping):
+                compatible.append(index)
+        matches.append(compatible)
+    use_count = [sum(index in compatible for compatible in matches)
+                 for index in range(len(templates))]
+    used, fused = set(), []
+    for body, compatible in zip(bodies, matches):
+        if len(compatible) == 1 and use_count[compatible[0]] == 1:
+            index = compatible[0]
+            visual = dict(templates[index])
+            visual['identity_verified'] = bool(body['identity_verified'] or visual['identity_verified'])
+            visual['sources'] = ['depth_body', 'rgb_template']
+            # Enrollment consumes the body descriptor, not the RGB template's
+            # label-only metadata. Preserve the independently measured body
+            # feature when both sources agree on the same object.
+            if 'feature' in body:
+                visual['feature'] = body['feature']
+            fused.append(visual)
+            used.add(index)
+        else:
+            fused.append(body)
+    fused.extend(visual for index, visual in enumerate(templates) if index not in used)
+    return fused

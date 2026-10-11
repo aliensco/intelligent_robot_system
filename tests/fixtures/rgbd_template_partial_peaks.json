@@ -1,0 +1,12 @@
+{
+  "source": "Human-reviewed front Kobuki; synchronized RGB-D captured after trial 20261011_175543_41426. Two 64px patches are vertically displaced portions of the same black base.",
+  "reference_width_m": 0.3,
+  "proposals": [
+    {"bbox": [218, 324, 64, 19], "width_m": 0.15859810965401785, "depth": 1.3010001182556152, "correlation": 0.8342645764350891},
+    {"bbox": [213, 315, 140, 42], "width_m": 0.3522666931152344, "depth": 1.321000099182129, "correlation": 0.8336983323097229},
+    {"bbox": [216, 320, 76, 23], "width_m": 0.1883352552141462, "depth": 1.3010001182556152, "correlation": 0.8178319334983826},
+    {"bbox": [218, 334, 64, 19], "width_m": 0.15859810965401785, "depth": 1.3010001182556152, "correlation": 0.8080710768699646},
+    {"bbox": [215, 319, 120, 36], "width_m": 0.3008000237601144, "depth": 1.3160001039505005, "correlation": 0.7887177467346191},
+    {"bbox": [216, 324, 104, 31], "width_m": 0.25871240343366353, "depth": 1.3060001134872437, "correlation": 0.7848657965660095}
+  ]
+}

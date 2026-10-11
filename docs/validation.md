@@ -1,5 +1,125 @@
 # 验证记录
 
+## 2026-10-11 当前方式三版本与验收边界
+
+当前任务为本车 Kinect RGB-D 自主识别并跟随前方 Turtlebot。最新已经执行的
+RGB-D 离线回归为 **257 项全部通过**，`validate_project.py` 完成 **71 个 Python 文件及项目结构校验**；
+这不是完整实车绕障或比赛成绩的证明。
+下方较早日期与轮次保留历史参数和失败证据，现场运行以本节及
+[方式三场地入口](../turtlebot/follow3/README.md) 为准。
+
+最新实现：
+
+- **视觉与深度共同识别。** 每帧同时评估 RGB 底盘模板与深度形状；只有空间位置、
+  测得深度和真实支撑像素一致且关联唯一时融合，保留不同物体和歧义候选。
+  RGB 框改善黑色底盘深度空洞时的中心估计，距离仍使用真实配准深度。
+  模板候选的非极大值抑制（NMS）排序加入实测物理宽度与登记宽度的一致性，
+  修复 64 像素、约 0.159 m 的半底盘框抑制 140 像素、约 0.352 m 完整框的问题
+  （该模板登记宽度为 0.30 m）；原重叠抑制和身份判定阈值没有放宽。
+  障碍点云与目标身份识别独立处理。
+- **按地图自主规划。** 正常跟随停车点与更远绕行点共同竞争，按全车可达路径长度、
+  软障碍代价、间距误差，以及重建路径前 0.25 m 相对前车方向的夹角评分。
+  通用栅格连通搜索/Dijkstra 选点，场地模式沿真实重建路径取约 0.30 m 前瞻子目标，
+  再交给 Navfn 和 DWA；路径代价权重保持 0.25，没有特定锥桶坐标或预写绕行方向。
+  已到达或失败的中间点短期排除；普通规划失败可重新选点。
+- **减少反复换目标。** 可用绕行目标最长保持 8 秒；目标明显移动、新障碍挡住终点、
+  导航失败或持续视野拒绝仍能解除保持。点云、局部避障与速度检查持续更新。
+- **统一运行配置。** `prepare_field_launch` 同步 DWA、门控和转发器速度上限，
+  DWA 使用四档动态窗口线速度采样，允许原地转向。较小上限下同时降低最小速度，
+  保证第一控制周期存在可达候选。每轮重建跟随状态，保留正常工作的传感器驱动。
+  场地 shell 入口通过 `flock --close` 限定单个会话，重复启动会提示已有会话，
+  不再因同名 ROS 节点挤掉正在运行的本入口会话；长期保留的可视化/驱动子进程不继承锁。
+  入口保留调用参数后再 source ROS 工作空间，修复 `--help` 被 setup 脚本消耗的问题；
+  虚拟机上的 `bash -n` 与入口 `--help` 已通过。
+- **检查完整 RGB-D 链。** 复用相机前及启动后分别检查 RGB 和配准深度源时间戳；
+  深度有数据而 RGB rectifier loader 残留时，重建本相机 namespace 的完整 nodelet 链。
+  识别状态记录 RGB/深度/CameraInfo 原始时间戳及处理耗时，旧帧不会因新的状态接收时间变成新帧。
+- **无进展时换路。** 目标尚未到达、门控累计限速且里程计没有足够平移/转向进展时，
+  取消当前目标、暂时排除该点，等待新地图后重新规划。已到跟随间距的正常停留与有效原地转向
+  不判为卡住；这是通用状态处理，没有锥桶坐标判断。
+- **自主回正视野。** 前车仍在画面边缘而 DWA 平移弧线会丢失目标时，Gate 可以生成原地转向，
+  比较左右转向对图像偏移的改善，并检查整段视野、车体扫过范围与制动包络。
+  目标已经丢失时不借此盲目转动。
+- **瞬时角速度处理。** 仅 field 模式在实测角速度超过命令上限加 0.03 rad/s 时立即输出零，
+  连续新里程计超限 0.10 秒才永久结束会话；超过独立严重异常阈值立即结束。
+  恢复要求新里程计持续 0.10 秒回到命令上限内，旧/重复消息不能解锁；暂停不重置行程或时长预算。
+  以当前 0.30 rad/s 命令上限，软阈值为 0.33，严重异常结束阈值为 0.40 rad/s；
+  后者不是准许运动速度。线速/横向速度、数据失鲜及严格 commissioning 模式的原有停止行为保留。
+
+用户测量当前后车宽约 **0.36 m**、长约 **0.305 m**。本车运行配置采用含余量的
+**0.25 m 圆形包络，额外 footprint padding 为 0**；其他车使用各自实测配置。
+期望跟随距离 **0.6 m**，正常停车点允许 **0.5 m**，**0.4 m** 停止前进。
+这里距离定义为后车底盘原点到前车识别表面点；绕障可以暂时拉开间距。
+默认指令上限为 **0.10 m/s、0.30 rad/s**，不代表实际速度一定达到此值。
+场地入口允许规划通过未观测栅格，这是明确的调试假设，不能视为已经测得净空；
+真实点云障碍与全车轮廓碰撞检查仍参与规划。
+
+较早已结束的试跑 `field_sessions/20261011_174407_35335`：
+
+| 指标 | 实测结果 |
+| --- | --- |
+| 时长上限 | 45 秒 |
+| 累计行程 | 0.13518797 m |
+| 累计转角 | 0.426733 rad，约 24.45° |
+| 峰值实测线速度 | 0.05544 m/s |
+| 峰值实测角速度 | 0.21537 rad/s |
+| 结束原因 | `duration_limit` |
+| 完整绕障验收 | 尚未通过 |
+
+`20261011_173720` 开头的前次试跑记录中，跟踪状态时间占比约 **98.696%**。
+该值描述状态维持时间，不是人工标注的检测准确率、召回率或整场成功率。
+45 秒试跑有实际移动和转向，但尚不能证明驶过障碍、持续跟上移动前车、正确到达终点并停稳。
+正在进行或没有最终日志的试跑不计为成功。
+
+随后 `20261011_174811_37500` 试跑净位移 **0.798438 m**、累计里程 **0.800125 m**，
+记录的 **133/133 个目标有效状态样本为 true**。该轮轨迹接近直线，证明这次布置下有连续的接近运动，
+不能据此认定已绕过锥桶，也不能把状态样本有效率当成人工标注的识别准确率。
+
+随后 `20261011_175543` 开头试跑，时长上限 **60 秒**：
+
+| 指标 | 实测结果 |
+| --- | --- |
+| 累计行程 | 0.36125477 m |
+| 累计转角 | 0.69516464 rad，约 39.83° |
+| 峰值实测线速度 | 0.07676288 m/s |
+| 峰值实测角速度 | 0.31922072 rad/s |
+| 角速度超限暂停次数 | `angular_overspeed_pauses: 0` |
+| 结束原因 | `duration_limit` |
+
+该轮后半程因 `ambiguous` / `reconfirm` 反复暂停，尚未形成持续完整绕障的通过证据。
+角速度峰值没有越过 0.33 rad/s，因此不能把本轮记为角速度瞬时暂停/恢复的实车验收；
+新增无进展换路和 Gate 自回正同样需要对应状态、轨迹和完整场景证据，未证实触发的功能不记为通过。
+
+更新识别和路径前瞻后，`20261011_180259` 开头试跑记录如下：
+
+| 指标 | 实测结果 |
+| --- | --- |
+| 累计行程（`motion.log`） | 0.6692445 m |
+| 净位移 | 约 0.6137 m |
+| 相对起始方向的右侧位移 | 约 0.203 m |
+| 跟随距离变化 | 约 1.437 → 0.866 m |
+| 目标有效状态占比 | 96.18%；此前对比轮次为 38.01% |
+| 最长目标丢失时间 | 0.603 秒；此前对比轮次为 13.61 秒 |
+| 地图推算的最小间隙 | 约 0.019 m，非实物测距 |
+| 角速度超限暂停 | 1 次，随后恢复 |
+
+同轮 bag 按采样点累计约 0.672 m，与 `motion.log` 存在采样差异，正式行程记录以上表日志为准。
+有效状态占比描述程序输出，前后轮次对比不是人工标注的识别准确率。
+地图间隙也不等于实测车体与障碍距离，不能凭这个值证明擦边无碰撞。
+该轮已观察到侧向绕行趋势、接近前车及角速度零输出暂停后的恢复，
+但没有完整越过障碍并持续跟随至终点的证据，仍不记为完整绕障通过。
+
+最新 `20261011_180505` 开头的收尾试跑，时长 **20 秒**，累计 **0.220309 m**，
+峰值实测线/角速度 **0.0724983 m/s / 0.379958 rad/s**，角速度软超限暂停 **1 次**后恢复，
+以 `duration_limit` 结束。角速度峰值是实际响应记录，不是提高后的命令上限。
+收尾静态画面为 `tracking`，显示一个完整 **224 × 68 像素**目标框，目标深度约 **0.708 m**；
+该深度不直接当作底盘坐标系的跟随距离。结束后机器人停稳，动态场景仍待现场测试。
+
+下一步按 [可重复验收说明](method3_acceptance.md) 记录直行、左绕、右绕、多障碍、
+遮挡和动态穿行，各场景分别输出 `PASS` / `FAIL` / `INCOMPLETE`。
+预算到期、厘米级移动、缺少新鲜 RGB/深度或障碍间隙、未到达预定终点、未实际测试的场景
+均不能直接通过；全队终点仍需额外现场验收。
+
 ## 2026-10-10 方式三移动调试准备与本轮验证
 
 本轮修复了以下控制边界：处理已膨胀代价地图时避免重复计算车体半径；目标仍在画面边缘可见时允许通过碰撞检查的回正；重捕获时分开计算连续强匹配与普通匹配，避免范围外候选干扰有效候选；没有历史轨迹的首次起步使用当前目标与跟随间距生成初始目标点。以上源码修复不代表完整赛道已经通过。
@@ -89,3 +209,22 @@ Field evidence: 156 offline RGB-D tests pass; ROS Kinetic catkin build succeeds;
 A physical trial ran the real gate output continuously for four seconds without target-loss interruption, but odometry recorded only 0.000384 m and encoder changes [9, 0]; this is NOT successful following or obstacle avoidance. Subsequent live work encountered both camera input timeout and Kobuki serial timeout. Dynamic bypass of a real obstacle and sustained following remain unverified. Current field profile uses 0.8 m standoff, 0.05 m/s linear cap, and visible-base proposal limits (0.13–0.50 m width, 0.075–0.20 m height, 0.17 m support-height ceiling); those are bounds on valid visible depth support, not physical robot dimensions.
 
 Later field result in the same session: after visible-depth-support tuning, float32 bound correction, intermediate-goal handling and low-speed tuning, trial `trial_1791694021.log` actually travelled **0.057103 m**, encoder changes **[677, 662]**, peak measured translation **0.029852 m/s**, peak output **0.05 m/s**, and stopped at the eight-second duration limit. Fresh odometry after the trial reported zero linear/angular velocity and the physical input topic had no publisher. This proves a bounded short approach, not sustained following or successful obstacle bypass. The optional `--resume-after-target-loss` mode emits zero during lost-target/unapproved-gate intervals and resumes only on fresh confirmed target and approved gate; time/distance limits are never reset, prolonged loss and emergency events still stop. Default strict one-shot behavior is unchanged. Latest offline suite: **158 tests passed**. Dedicated ROS master startup restored sensor streams after the camera-owned master exited during restart. An obstacle-placement request is pending for the next physical test.
+# 方式三场地绕障修复（2026-10-11）
+
+对 `20261011_165718_11671/telemetry.bag` 中地图回放：原先 0.5–0.6 m
+候选停车环被障碍覆盖，直线前缀目标导致导航失败，底盘仅移动 0.0165 m。
+新增可达中间点选择（轮廓膨胀、连通区域检查），保留已占用和未知区域的输入语义；
+允许暂时增大跟随间距绕障。场地配置修正最低线速度、转向和停车容差，并在普通导航
+失败后等待更新地图重试，忽略已经取消的旧目标回调。
+
+180 项 RGB-D 离线测试通过，包括实际失败地图回归、不可达孤立终点、阻塞停车环、未知区域、失败目标避让、
+新地图重试、急停和目标短暂超时恢复。部署后的第一轮实际移动 0.2146 m、累计转角
+0.5309 rad，因短暂目标消息超时结束；该超时已改为场地模式下零速度等待恢复。
+这证明运动和规划取得进展，不等同于完整绕过锥桶或完整赛道验收。
+
+第二轮 `20261011_170640_15492` 验证了 `navigation_retry_wait` 后自动换点恢复，
+但最大前进指令仅 0.0182 m/s，两轮编码器无增量。场地 DWA 改为两档线速度采样
+（动态窗口端点，静止时为 0 和 0.05 m/s），保留原地转向，防止持续选择无法起步的小速度。
+第三轮 `20261011_170818_16228` 实际移动 0.0060 m 后以 `stale_sensors` 结束；
+同时相机断流，内核有 xHCI `Transfer event TRB DMA ptr not part of current TD` 和
+`unknown event type 37`。这一轮不构成完整绕障成功证据，USB 数据链路仍阻碍实车验收。

@@ -34,6 +34,7 @@ class Diagnostics(object):
             for axis in ('linear_m_s', 'angular_rad_s'):
                 self.peaks['peak_' + source + '_' + axis] = None
         self.start_encoders = self.end_encoders = None
+        self.encoder_totals = [0, 0]
         self.peak_pwm = None
         self.sensor_samples = 0
 
@@ -50,17 +51,17 @@ class Diagnostics(object):
         encoders, pwm = [int(q) for q in values[:2]], [abs(int(q)) for q in values[2:]]
         if self.start_encoders is None:
             self.start_encoders = encoders[:]
+        else:
+            self.encoder_totals = [total+(end-start+32768) % 65536-32768
+                                   for total, start, end in zip(self.encoder_totals, self.end_encoders, encoders)]
         self.end_encoders = encoders
         self.peak_pwm = [max(a, b) for a, b in zip(self.peak_pwm or [0, 0], pwm)]
         self.sensor_samples += 1
 
     def summary(self):
         result = dict(self.peaks)
-        # Kobuki has unsigned 16-bit encoders; this tiny trial cannot turn a
-        # wheel by half the counter range. Preserve raw readings as evidence.
-        delta = None if self.start_encoders is None else [
-            (end - start + 32768) % 65536 - 32768
-            for start, end in zip(self.start_encoders, self.end_encoders)]
+        # Unwrap every sensor sample: a full field run can exceed 32768 ticks.
+        delta = None if self.start_encoders is None else self.encoder_totals[:]
         result.update({'start_encoders_left_right': self.start_encoders,
                        'end_encoders_left_right': self.end_encoders,
                        'encoder_delta_left_right': delta,
@@ -87,7 +88,7 @@ def monotonic_clock():
 
 
 class Trial(object):
-    """Pure state machine. A stop after arming is terminal, never auto-resumes."""
+    """Bounded relay; field mode can hold at zero while perception recovers."""
     def __init__(self, created, duration=4., distance=.06, yaw_limit=.1,
                  max_linear=.05, max_angular=.15, preflight=15., resume_after_target_loss=False,
                  field_test=False):
@@ -96,7 +97,8 @@ class Trial(object):
                 0 < duration <= (300 if field_test else 8) and
                 0 < distance <= (5 if field_test else .08) and
                 0 < yaw_limit <= (2*math.pi if field_test else .1) and
-                0 < max_linear <= .05 and 0 < max_angular <= .15 and 0 < preflight <= 30):
+                0 < max_linear <= (.10 if field_test else .05) and
+                0 < max_angular <= (.30 if field_test else .15) and 0 < preflight <= 30):
             raise ValueError('trial bounds exceed commissioning limits')
         self.created, self.duration, self.limit = created, duration, distance
         self.yaw_limit, self.max_linear, self.max_angular = yaw_limit, max_linear, max_angular
@@ -108,6 +110,50 @@ class Trial(object):
         self.distance = self.yaw = 0.
         self.reason, self.terminal = 'waiting_for_inputs', False
         self.diagnostics = Diagnostics()
+        self.angular_soft_limit = max_angular+.03
+        self.angular_hard_limit = max_angular+max(.10, max_angular*.30)
+        self.angular_paused = False
+        self.angular_over_since = self.angular_recovery_since = None
+        self.angular_pause_reason = None
+        self.angular_pause_count = 0
+
+    def field_measured_speed(self, v, lateral, w, stamp):
+        """Only new, validated odometry can advance field overspeed recovery.
+
+        The hard threshold ends the session; it is NOT a permitted drive rate.
+        Every sample above the unchanged soft limit latches zero output until
+        measured rotation remains within the command cap for 0.10 source seconds.
+        """
+        if abs(v) > self.max_linear+.015 or abs(lateral) > .015:
+            self.stop('measured_speed_exceeded')
+            return
+        rotation = abs(w)
+        if rotation > self.angular_hard_limit:
+            self.stop('measured_angular_speed_hard_limit')
+            return
+        if rotation > self.angular_soft_limit:
+            if not self.angular_paused:
+                self.angular_pause_count += 1
+            self.angular_paused = True
+            self.angular_pause_reason = 'paused_for_angular_overspeed'
+            self.angular_recovery_since = None
+            if self.angular_over_since is None:
+                self.angular_over_since = stamp
+            if stamp-self.angular_over_since >= .10-1e-6:
+                self.stop('measured_angular_speed_sustained')
+        elif self.angular_paused:
+            self.angular_over_since = None
+            self.angular_pause_reason = 'paused_for_angular_recovery'
+            if rotation <= self.max_angular:
+                if self.angular_recovery_since is None:
+                    self.angular_recovery_since = stamp
+                if stamp-self.angular_recovery_since >= .10-1e-6:
+                    self.angular_paused = False
+                    self.angular_recovery_since = None
+                    self.angular_pause_reason = None
+            else:
+                # Hysteresis: falling just below the soft limit is insufficient.
+                self.angular_recovery_since = None
 
     def update(self, name, value, now):
         self.data[name] = (value, now)
@@ -139,15 +185,21 @@ class Trial(object):
             return
         self.diagnostics.velocity('measured', math.hypot(v, lateral), w)
         if self.previous is not None and self.started is not None:
-            px, py, pyaw, unused = self.previous
+            px, py, pyaw, previous_stamp = self.previous
             step = math.hypot(x - px, y - py)
             turn = abs(math.atan2(math.sin(yaw - pyaw), math.cos(yaw - pyaw)))
             self.distance += step
             self.yaw += turn
-            if step > .03 or turn > .05:
+            elapsed = stamp-previous_stamp
+            if (step > max(.03, (self.max_linear+.015)*elapsed+.005) or
+                    turn > max(.05, (self.max_angular+.03)*elapsed+.005)):
                 self.stop('odometry_jump')
         self.previous = (x, y, yaw, stamp)
         self.update('odom', (v, lateral, w), now - (ros_now - stamp))
+        if self.field_test and self.started is not None and not self.terminal:
+            # Observe here, not after target/gate checks: a perception pause
+            # cannot hide persistent physical overspeed or a one-frame spike.
+            self.field_measured_speed(v, lateral, w, stamp)
 
     def output(self, now):
         if self.terminal:
@@ -156,11 +208,33 @@ class Trial(object):
             return self.stop('preflight_timeout:' + self.reason)
         if self.started is not None and now - self.started >= self.duration:
             return self.stop('duration_limit')
+        stale = []
         for name in ('command', 'status', 'target', 'estop', 'lease', 'sensors', 'odom', 'graph'):
-            age = .5 if name == 'graph' else (.3 if name == 'odom' else .2)
+            # Match the upstream 0.5 s RGB-D watchdog and 0.3 s gate command
+            # timeout. An unrelated 0.2 s limit caused needless stop/restarts
+            # when image processing briefly took more than one frame period.
+            age = (.5 if name in ('graph', 'target') else
+                   (.3 if name in ('odom', 'command', 'status') else .2))
             if name not in self.data or not 0 <= now - self.data[name][1] <= age:
-                self.reason = 'stale_' + name
-                return self.stop(self.reason) if self.started is not None else (0., 0.)
+                stale.append(name)
+        critical = [name for name in stale if name not in ('command', 'status', 'target')]
+        if self.field_test and self.started is not None and not critical:
+            measured, lateral, unused_angular = self.data['odom'][0]
+            if abs(measured) > self.max_linear+.015 or abs(lateral) > .015:
+                return self.stop('measured_speed_exceeded')
+            if self.angular_paused:
+                self.reason = self.angular_pause_reason
+                return (0., 0.)
+        if stale:
+            if self.started is not None and self.field_test and self.resume_after_target_loss and not critical:
+                if self.paused_since is None:
+                    self.paused_since = now
+                if now-self.paused_since >= 60.:
+                    return self.stop('target_or_gate_recovery_timeout')
+                self.reason = 'paused_for_stale_' + stale[0]
+                return (0., 0.)
+            self.reason = 'stale_' + (critical[0] if critical else stale[0])
+            return self.stop(self.reason) if self.started is not None else (0., 0.)
         d = dict((key, value[0]) for key, value in self.data.items())
         if d['estop'] or not d['lease'] or not d['sensors']:
             return self.stop('estop_lease_sensor_or_graph_veto')
@@ -190,7 +264,8 @@ class Trial(object):
         v = min(v, self.max_linear)
         w = max(-self.max_angular, min(w, self.max_angular))
         measured, lateral, angular = d['odom']
-        if abs(measured) > .065 or abs(lateral) > .015 or abs(angular) > .18:
+        if (abs(measured) > self.max_linear+.015 or abs(lateral) > .015 or
+                abs(angular) > self.max_angular+.03):
             return self.stop('measured_speed_exceeded')
         if self.started is None:
             if abs(measured) > .01 or abs(angular) > .03:
@@ -227,7 +302,7 @@ def parser():
     p.add_argument('--resume-after-target-loss', action='store_true',
                    help='Within the same bounded trial, pause at zero and resume after fresh target/gate confirmation')
     p.add_argument('--field-test', action='store_true',
-                   help='Explicit field session: up to 300 s / 5 m, same speed and fresh-input checks')
+                   help='Explicit field session: up to 300 s / 5 m / 0.10 m/s / 0.30 rad/s')
     p.add_argument('--odom-frame', default='odom')
     p.add_argument('--base-frame', default='base_footprint')
     return p
@@ -333,8 +408,13 @@ def main():
                 trial.diagnostics.velocity('output', out.linear.x, out.angular.z)
                 heartbeat[0] = clock()
                 if trial.reason != last_reason:
-                    print(json.dumps({'reason': trial.reason, 'distance_m': trial.distance,
-                                      'yaw_rad': trial.yaw, 'armed': trial.started is not None}))
+                    status = {'reason': trial.reason, 'distance_m': trial.distance,
+                              'yaw_rad': trial.yaw, 'armed': trial.started is not None}
+                    if trial.field_test and trial.angular_paused:
+                        status.update(angular_soft_limit_rad_s=trial.angular_soft_limit,
+                                      angular_hard_limit_rad_s=trial.angular_hard_limit,
+                                      measured_angular_rad_s=trial.data.get('odom', ((0., 0., None),))[0][2])
+                    print(json.dumps(status))
                     last_reason = trial.reason
                 if trial.terminal:
                     break
@@ -354,6 +434,11 @@ def main():
                            'yaw_rad': trial.yaw, 'armed': trial.started is not None,
                            'stop_trigger_distance_m': trial.limit,
                            'diagnostic_window': 'preflight_through_0.5s_stop_tail'})
+            if trial.field_test:
+                record.update(angular_overspeed_pauses=trial.angular_pause_count,
+                              angular_soft_limit_rad_s=trial.angular_soft_limit,
+                              angular_hard_limit_rad_s=trial.angular_hard_limit,
+                              angular_recovery_hold_s=.10)
         print(json.dumps(record))
         rospy.signal_shutdown('bounded trial complete')
 

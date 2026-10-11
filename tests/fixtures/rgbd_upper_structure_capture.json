@@ -1,0 +1,70 @@
+{
+  "camera": [
+    525.0,
+    525.0,
+    39.5,
+    239.5
+  ],
+  "crop_xywh": [
+    280,
+    0,
+    300,
+    480
+  ],
+  "depth_invalid": "NaN",
+  "depth_units": "metres",
+  "description": "Real Kinect depth crop containing a front Turtlebot and nearby cone; full image height retained for visibility checks. Visual labels independently reviewed from source RGB; no RGB pixels retained.",
+  "fixture": "rgbd_upper_structure_capture.npz",
+  "floor_plane": [
+    [
+      0.004609981447151491,
+      -0.9998394715798994,
+      -0.017314131277214706
+    ],
+    0.29794203078334536
+  ],
+  "limitations": "Single static diagnostic frame, not independent detection or navigation acceptance. Candidate boxes are captured proposals, not full-object ground-truth boxes.",
+  "original_shape": [
+    480,
+    640
+  ],
+  "proposals": [
+    {
+      "bbox": [
+        63,
+        292,
+        48,
+        14
+      ],
+      "depth": 1.78600013256073,
+      "label": "front_turtlebot_partial_base",
+      "point": [
+        0.16159048818406604,
+        0.20241334835688274,
+        1.78600013256073
+      ]
+    },
+    {
+      "bbox": [
+        122,
+        393,
+        120,
+        36
+      ],
+      "depth": 0.8020000457763672,
+      "label": "blue_cone_base",
+      "point": [
+        0.21768572671072825,
+        0.26198668162027994,
+        0.8020000457763672
+      ]
+    }
+  ],
+  "reference_width_m": 0.3,
+  "source_depth_sha256": "6f79e24b00052d831c9cf2decdcc3cb4797994a7f663cc9642246d94ffa83b9f",
+  "source_rgb_sha256": "78ec7577ccea2e4003cd6cb98681dcf62cd5a8569eba0d78f6a00248ecd37f41",
+  "source_stamps": [
+    1791714034.2840233,
+    1791714034.2595766
+  ]
+}

@@ -52,12 +52,17 @@ class VisibilityRecoveryNodeTests(unittest.TestCase):
         self.assertAlmostEqual(out.angular.z, .2)
         self.assertEqual(n.reason, 'shadow_visibility_recenter')
 
-    def test_recovery_never_drives_forward_or_turns_outward(self):
-        for v, w in ((.04, .2), (0., -.2)):
-            n = self.gate()
-            n.command.linear.x, n.command.angular.z = v, w
-            out = n.output()
-            self.assertEqual((out.linear.x, out.angular.z), (0., 0.))
+    def test_translating_curve_recovers_in_place_and_outward_spin_is_stopped(self):
+        n = self.gate()
+        n.command.linear.x, n.command.angular.z = .04, .2
+        out = n.output()
+        self.assertEqual(out.linear.x, 0.)
+        self.assertGreater(out.angular.z, 0.)
+        self.assertLessEqual(out.angular.z, n.c['max_angular'])
+        n = self.gate()
+        n.command.angular.z = -.2
+        out = n.output()
+        self.assertEqual((out.linear.x, out.angular.z), (0., 0.))
 
     def test_lost_stale_and_offscreen_targets_stay_stopped(self):
         for kind in ('lost', 'stale', 'offscreen'):
