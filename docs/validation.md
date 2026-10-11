@@ -18,6 +18,8 @@ Windows 全项目 **179 项测试全部通过**，**58 个 Python 文件静态�
 
 ## 已进行的离线检查
 
+方式三前车 Turtlebot 识别初步适配：新增可选 `max_support_height_m`，仅在地面模型上的识别候选中选取下方底盘，保留完整避障深度。新增高度带边界验证及上方结构排除/原深度不变测试，全项目 **181 项通过**，58 个 Python 文件静态检查通过。现场数据目录 `turtlebot_capture_1791687781`：人工 ROI `[350,285,160,90]` 登记 3 帧，另外 5 帧均唯一识别；6 秒实时预览中 24/24 帧各一个候选，匹配分数约 0.219–0.312。尚未做无目标、跨视角、遮挡、移动和避障验收。重新连接的底盘为 AI06FBJN，左保险杠位持续为 4，因此本轮未发送运动指令；未把上次另一底盘的移动记录算作本轮通过。
+
 2026-10-10（虚拟机日期）方式三清障修复：拆分障碍标记与清障观测，清障保留量程内较远及车体高度之外的真实回波；无效深度仍不产生清障射线。Windows 全项目 **129 项测试通过、无跳过**，52 个 Python 文件及 XML/YAML 等结构检查通过。Ubuntu 16.04 / ROS Kinetic / Python 2.7 中 catkin 构建通过；独立 ROS master 的 `clearing_observations.test` 使用真实 VoxelLayer 验证远背景、高处端点、无效深度、前景遮挡、地面射线、同时标记/清障及空标记云替换旧缓存，共 1 个功能测试、7 类场景通过。原 `navigation_smoke.test` 导航和丢失停车也通过，未修改原通过条件。测试没有连接实车速度接口。
 
 现场 `obstacle_return_1791609527` 的深度和占用体素快照已用 `tools/replay_clearing_snapshot.py` 在另一独立 ROS master 重放：相同 4 像素步长下，4.0 m 观测保留 9 个旧体素、4 列；4.5 m 有效观测剩 5 个体素、2 列。两组均观测 40 次地图更新。剩余高度没有有效背景射线，不能改成自由空间；此结果是保存快照的受控重放，不是实机清除耗时或完整动态场景通过。部署重启地图后的空白也不算清障成功证据。
@@ -73,3 +75,17 @@ python3 humanoid/scripts/competition.py --simulate
 | 四车终点到达与停稳、跟随方式分类 | 待测 | |
 
 建议每次试跑记录 Git commit、配置文件、地图版本、成功/失败原因，便于另一台电脑复现。失败记录与成功记录都保留。
+
+### Turtlebot target and near-field commissioning fixes (2026-10-10)
+
+- Evaluate identity for all overlapping depth windows before suppressing duplicates. Previously a larger contaminated window could discard the matching window before matching ran.
+- Smooth only the twelve achromatic brightness bins within each body quadrant, equally for live and saved templates. Color bins, spatial quadrants, geometry gates, and loss-triggered stopping remain separate. This is tolerance to small exposure shifts, not a general robot classifier.
+- For a blocked live-standoff endpoint, `observed_prefix` can choose an intermediate goal whose entire sampled swept footprint is clear. It never jumps across a blocked section, shortcuts the measured leader trail, or treats an intermediate goal as mission completion.
+- Optional `commissioning_clearance:=true` installs an operator-inspected-region layer after obstacles and before inflation. `tools/publish_commissioning_clearance.py --confirm-clearance` publishes one fixed odom-frame rectangle from fresh stationary odometry. Default dimensions from the base origin: front 0.60 m, rear 0.50 m, left/right 0.50 m. Inspect the entire specified region first. The layer only fills unknown cells, leaves marked obstacles intact, and expires on either ROS or wall-clock time (default 10 seconds, maximum 15). It is disabled by default and is not a substitute for sensor coverage in continuous competition runs.
+- The bounded trial now tolerates float32 serialization error at a speed limit, then clamps the actual output to the exact original limit. Meaningful overspeed still rejects.
+
+Field evidence: 156 offline RGB-D tests pass; ROS Kinetic catkin build succeeds; the real rolling-costmap regression verifies obstacle retention, outside-region unknown space, wrong-frame rejection, expiry back to unknown, and stale replay rejection. Near-view replay detected one target in 24/24 frames; far-view replay detected one target in 6/6 frames, of which one was enrolled and five were held out from enrollment (same static arrangement).
+
+A physical trial ran the real gate output continuously for four seconds without target-loss interruption, but odometry recorded only 0.000384 m and encoder changes [9, 0]; this is NOT successful following or obstacle avoidance. Subsequent live work encountered both camera input timeout and Kobuki serial timeout. Dynamic bypass of a real obstacle and sustained following remain unverified. Current field profile uses 0.8 m standoff, 0.05 m/s linear cap, and visible-base proposal limits (0.13–0.50 m width, 0.075–0.20 m height, 0.17 m support-height ceiling); those are bounds on valid visible depth support, not physical robot dimensions.
+
+Later field result in the same session: after visible-depth-support tuning, float32 bound correction, intermediate-goal handling and low-speed tuning, trial `trial_1791694021.log` actually travelled **0.057103 m**, encoder changes **[677, 662]**, peak measured translation **0.029852 m/s**, peak output **0.05 m/s**, and stopped at the eight-second duration limit. Fresh odometry after the trial reported zero linear/angular velocity and the physical input topic had no publisher. This proves a bounded short approach, not sustained following or successful obstacle bypass. The optional `--resume-after-target-loss` mode emits zero during lost-target/unapproved-gate intervals and resumes only on fresh confirmed target and approved gate; time/distance limits are never reset, prolonged loss and emergency events still stop. Default strict one-shot behavior is unchanged. Latest offline suite: **158 tests passed**. Dedicated ROS master startup restored sensor streams after the camera-owned master exited during restart. An obstacle-placement request is pending for the next physical test.

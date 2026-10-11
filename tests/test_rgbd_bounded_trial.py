@@ -16,6 +16,37 @@ else:
 
 
 class BoundedTrialTests(unittest.TestCase):
+    def test_long_session_requires_explicit_field_mode(self):
+        with self.assertRaises(ValueError):
+            MODULE.Trial(10., duration=60., distance=1.)
+        trial = self.ready(MODULE.Trial(10., duration=60., distance=1., yaw_limit=1.,
+                                      resume_after_target_loss=True, field_test=True))
+        self.assertEqual(trial.output(10.), (.04, 0.))
+        trial.distance = .20
+        self.ready(trial, now=11.)
+        self.assertEqual(trial.output(11.), (.04, 0.))
+        trial.distance = 1.
+        self.assertEqual(trial.output(11.01), (0., 0.))
+        self.assertEqual(trial.reason, 'travel_budget')
+
+    def test_field_hold_keeps_zero_and_can_resume_without_renewing_budget(self):
+        trial = self.ready(MODULE.Trial(10., duration=60., distance=1., yaw_limit=1.,
+                                      resume_after_target_loss=True, field_test=True))
+        trial.output(10.)
+        self.ready(trial, now=11.)
+        trial.update('status', 'permission_or_command_stale', 11.)
+        self.assertEqual(trial.output(11.), (0., 0.))
+        self.ready(trial, now=20.)
+        trial.update('status', 'permission_or_command_stale', 20.)
+        self.assertEqual(trial.output(20.), (0., 0.))
+        self.assertFalse(trial.terminal)
+        self.ready(trial, now=21.)
+        self.assertEqual(trial.output(21.), (.04, 0.))
+        self.assertEqual(trial.started, 10.)
+        trial.update('sensors', False, 21.01)
+        self.assertEqual(trial.output(21.01), (0., 0.))
+        self.assertTrue(trial.terminal)
+
     def ready(self, trial=None, now=10., command=(.04, 0., 0.)):
         trial = trial or MODULE.Trial(now)
         for key, value in [('command', command), ('status', 'shadow_velocity_only'),
@@ -32,6 +63,28 @@ class BoundedTrialTests(unittest.TestCase):
         self.assertEqual(trial.output(25.), (0., 0.))
         self.assertTrue(trial.terminal)
 
+    def test_optional_recovery_pauses_zero_without_resetting_trial_budget(self):
+        trial = self.ready(MODULE.Trial(10., resume_after_target_loss=True))
+        self.assertEqual(trial.output(10.), (.04, 0.))
+        trial.update('target', False, 10.02)
+        self.assertEqual(trial.output(10.02), (0., 0.))
+        self.assertFalse(trial.terminal)
+        self.assertEqual(trial.started, 10.)
+        self.ready(trial, now=10.10)
+        self.assertEqual(trial.output(10.10), (.04, 0.))
+        self.assertEqual(trial.started, 10.)
+        self.ready(trial, now=14.01)
+        self.assertEqual(trial.output(14.01), (0., 0.))
+        self.assertEqual(trial.reason, 'duration_limit')
+
+    def test_optional_recovery_does_not_resume_after_emergency(self):
+        trial = self.ready(MODULE.Trial(10., resume_after_target_loss=True))
+        trial.output(10.)
+        trial.update('sensors', False, 10.02)
+        self.ready(trial, now=10.1)
+        self.assertEqual(trial.output(10.1), (0., 0.))
+        self.assertTrue(trial.terminal)
+
     def test_relays_exact_curvature_and_rejects_oversized_not_clips(self):
         trial = self.ready(command=(.04, .08, 0.))
         self.assertEqual(trial.output(10.), (.04, .08))
@@ -39,6 +92,17 @@ class BoundedTrialTests(unittest.TestCase):
         self.assertEqual(trial.output(10.01), (0., 0.))
         trial.update('command', (.04, .08, 0.), 10.02)
         self.assertEqual(trial.output(10.02), (0., 0.))
+
+    def test_float32_limits_are_accepted_but_output_is_clamped(self):
+        import struct
+        f32 = lambda v: struct.unpack('f', struct.pack('f', v))[0]
+        for sign in (-1, 1):
+            trial = self.ready(command=(f32(.05), sign*f32(.15), 0.))
+            self.assertEqual(trial.output(10.), (.05, sign*.15))
+            self.assertFalse(trial.terminal)
+        trial = self.ready(command=(.05, .15001, 0.))
+        self.assertEqual(trial.output(10.), (0., 0.))
+        self.assertEqual(trial.reason, 'command_out_of_bounds')
 
     def test_all_stale_inputs_latch_stop_after_armed(self):
         for key in ('command', 'status', 'target', 'estop', 'lease', 'sensors', 'odom', 'graph'):

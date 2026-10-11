@@ -60,7 +60,11 @@ class Target(object):
                            [m.header.frame_id for m in (rgb, depth, info)],
                            [(m.width, m.height) for m in (rgb, depth, info)], depth.encoding)
                 if self.last_pair is not None and any(s <= old for s, old in zip(stamps, self.last_pair)):
-                    return self.reject('repeated_or_out_of_order_input')
+                    # An obsolete synchronizer delivery is not a new negative
+                    # observation. Keep the last accepted state without renewing
+                    # its receipt/stamp; the watchdog still expires it normally.
+                    rospy.logwarn_throttle(2, 'Ignoring repeated/out-of-order RGB-D pair')
+                    return
                 self.last_pair, self.receipt = stamps, self.clock()
                 camera = intrinsics(info.P, rgb.width, rgb.height)
                 image = self.bridge.imgmsg_to_cv2(rgb, 'bgr8')

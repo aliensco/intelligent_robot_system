@@ -50,6 +50,33 @@ class BodyTests(unittest.TestCase):
         self.enroll()
         self.assertEqual(len(self.candidates(*self.scene())), 1)
 
+    def test_nested_partial_body_at_different_depth_is_one_target(self):
+        rgb, depth = self.scene()
+        self.config['perception']['body']['min_height_m'] = .06
+        self.config['perception']['body']['min_width_m'] = .10
+        depth[176:200, 136:184] = 1.16
+        self.assertEqual(len(self.candidates(rgb, depth)), 1)
+
+    def test_bad_larger_window_cannot_suppress_matching_overlap(self):
+        self.enroll()
+        # Simulate appearance contamination in one overlapping depth window.
+        # Detection must still evaluate the other window before suppression.
+        import rgbd_following_core.body as body
+        original = body.match_reference
+        calls = []
+        def score(*args):
+            calls.append(args[0])
+            return .9 if len(calls) == 1 else .1
+        body.match_reference = score
+        try:
+            candidates = self.candidates(*self.scene())
+        finally:
+            body.match_reference = original
+        self.assertGreater(len(calls), 1)
+        self.assertEqual(len(candidates), 1)
+        self.assertAlmostEqual(candidates[0]['identity_score'], .1)
+        self.assertNotIn('_support', candidates[0])
+
     def test_two_similar_objects_remain_ambiguous(self):
         self.enroll()
         self.assertEqual(len(self.candidates(*self.scene((80, 240)))), 2)
@@ -57,6 +84,23 @@ class BodyTests(unittest.TestCase):
     def test_same_shape_different_appearance_is_rejected(self):
         self.enroll()
         self.assertEqual(self.candidates(*self.scene(color=(0, 0, 220))), [])
+
+    def test_small_exposure_change_keeps_same_body(self):
+        self.enroll()
+        rgb, depth = self.scene()
+        rgb[120:200, 136:184] = np.clip(
+            rgb[120:200, 136:184].astype(int)+12, 0, 255).astype(np.uint8)
+        self.assertEqual(len(self.candidates(rgb, depth)), 1)
+
+    def test_brightness_smoothing_preserves_color_and_quadrant_mass(self):
+        from rgbd_following_core.appearance import smooth_body_brightness
+        source = [0.]*144
+        source[0], source[11], source[12], source[143] = .2, .3, .1, .4
+        smoothed = smooth_body_brightness(source)
+        self.assertAlmostEqual(sum(smoothed), sum(source))
+        self.assertEqual(smoothed[12], .1)
+        self.assertEqual(smoothed[143], .4)
+        self.assertEqual(sum(smoothed[36:108]), 0.)
 
     def test_no_floor_never_falls_back_to_color(self):
         rgb, depth = self.scene()
@@ -67,6 +111,24 @@ class BodyTests(unittest.TestCase):
         rgb, depth = self.scene()
         depth[:] = np.nan
         self.assertEqual(self.candidates(rgb, depth), [])
+
+    def test_lower_base_band_excludes_upper_structure_without_changing_depth(self):
+        rgb, depth = self.scene()
+        before = depth.copy()
+        body = self.config['perception']['body']
+        body.update(min_height_m=.08, max_height_m=.20, max_support_height_m=.17)
+        validate(self.config)
+        candidates, mask = detect(rgb, depth, self.camera, self.config['perception'])
+        self.assertEqual(len(candidates), 1)
+        self.assertLess(candidates[0]['feature']['height_m'], .17)
+        self.assertFalse(mask[:160].any())
+        np.testing.assert_equal(depth, before)
+
+    def test_invalid_recognition_support_band_is_rejected(self):
+        for height in (0., .03, .9, float('nan')):
+            self.config['perception']['body']['max_support_height_m'] = height
+            with self.assertRaises(ValueError):
+                validate(self.config)
 
     def test_floating_body_is_rejected(self):
         rgb, depth = self.scene(())

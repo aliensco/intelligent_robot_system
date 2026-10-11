@@ -100,3 +100,54 @@ def need_goal(previous, point, state, final, elapsed, shift=0.15, interval=0.5):
     delta = math.hypot(previous[0] - point[0], previous[1] - point[1])
     # Always deliver the final small shift; do not strand a robot at the old goal.
     return elapsed >= interval and delta >= (0.02 if final or state == 3 else shift)
+
+
+def observed_prefix(grid, robot, goal, radius, minimum_progress=.05):
+    """A short standoff approach entirely within observed, collision-free space.
+
+    Used only when a live standoff endpoint is unknown/blocked, not as a shortcut
+    across a recorded leader trail. Stop at the FIRST blocked swept footprint;
+    never jump over an obstacle to a farther free point.
+    """
+    dx, dy = goal[0]-robot[0], goal[1]-robot[1]
+    length = math.hypot(dx, dy)
+    if not finite(length) or length < minimum_progress or not grid.clear(robot[0], robot[1], radius):
+        return None
+    reach = min(length, 1.0)
+    step = min(.02, grid.resolution/2.)
+    count = max(1, int(math.ceil(reach/step)))
+    selected = None
+    for index in range(1, count+1):
+        progress = reach*index/count
+        x, y = robot[0]+dx/length*progress, robot[1]+dy/length*progress
+        if not grid.clear(x, y, radius):
+            break
+        if progress >= minimum_progress:
+            selected = (x, y, math.atan2(dy, dx))
+    return selected
+
+
+def clear_standoff(grid, robot, target, gap, radius, minimum_gap=None):
+    """Choose a clear endpoint on the target's trailing distance arc.
+
+    Endpoint clearance is not a path clearance claim. move_base and the swept
+    footprint gate must still plan/check the approach through obstacle geometry.
+    """
+    dx, dy = target[0]-robot[0], target[1]-robot[1]
+    heading = math.atan2(dy, dx)
+    choices = []
+    minimum_gap = gap if minimum_gap is None else minimum_gap
+    if not 0 < minimum_gap <= gap:
+        raise ValueError('Invalid standoff gap range')
+    count = max(1, int(math.ceil((gap-minimum_gap)/.05)))
+    gaps = [gap-(gap-minimum_gap)*i/count for i in range(count+1)]
+    for candidate_gap in gaps:
+        for angle in (0, -15, 15, -30, 30, -45, 45, -60, 60):
+            a = heading+math.radians(angle)
+            x, y = target[0]-candidate_gap*math.cos(a), target[1]-candidate_gap*math.sin(a)
+            if not grid.clear(x, y, radius):
+                continue
+            cost = (math.hypot(x-robot[0], y-robot[1]) + .05*abs(math.radians(angle)) +
+                    2*abs(candidate_gap-gap))
+            choices.append((cost, (x, y, math.atan2(target[1]-y,target[0]-x))))
+    return min(choices, key=lambda item: item[0])[1] if choices else None

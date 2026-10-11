@@ -90,7 +90,10 @@ def detect_body(rgb, depth, camera, config):
     if plane is None:
         return [], empty
     heights = np.sum(points * plane[0], axis=2) + plane[1]
-    foreground = valid & (heights > .035) & (heights < options['max_height_m'] + .08)
+    # An optional ground-relative band can isolate a wheeled base from its
+    # disconnected shelves. This affects recognition only, never obstacle clouds.
+    support_height = options.get('max_support_height_m', options['max_height_m'] + .08)
+    foreground = valid & (heights > .035) & (heights < support_height)
     proposals = []
     for low in np.arange(config['min_depth'], config['max_depth'], .15):
         slab = foreground & (safe_z >= low) & (safe_z < low + .30)
@@ -115,23 +118,11 @@ def detect_body(rgb, depth, camera, config):
                 continue
             proposals.append((int(support.sum()), (x*stride, y*stride, w*stride, h*stride),
                               distance, support, float(np.median(u))*stride, float(np.median(v))*stride))
-    # Overlapping depth windows produce duplicate proposals. Deduplicate only
-    # overlapping boxes at the same depth; distinct objects remain ambiguous.
-    selected = []
-    for item in sorted(proposals, key=lambda p: p[0], reverse=True):
-        _, (x, y, w, h), distance, support, u, v = item
-        duplicate = False
-        for old in selected:
-            a, b, c, d = old[1]
-            intersection = max(0, min(x+w, a+c)-max(x, a))*max(0, min(y+h, b+d)-max(y, b))
-            if abs(distance-old[2]) < .15 and intersection / float(w*h+c*d-intersection) > .45:
-                duplicate = True
-                break
-        if not duplicate:
-            selected.append(item)
     hsv = cv2.cvtColor(rgb, cv2.COLOR_BGR2HSV)
     candidates = []
-    for _, bbox, distance, support, u, v in selected:
+    # Score EVERY depth window before suppression. A larger, contaminated
+    # window must not discard an overlapping window that matches the target.
+    for _, bbox, distance, support, u, v in proposals:
         full = np.repeat(np.repeat(support, stride, axis=0), stride, axis=1)[:depth.shape[0], :depth.shape[1]]
         full &= np.isfinite(depth) & (np.abs(np.nan_to_num(depth)-distance) < .30)
         feature = body_feature(hsv, full, bbox, distance, camera)
@@ -139,9 +130,31 @@ def detect_body(rgb, depth, camera, config):
         score = match_reference(feature, identity['references'], identity['shape_ratio'], identity['width_ratio'])
         if identity['references'] and score > identity['max_distance']:
             continue
-        empty[full] = 255
         candidates.append(dict(point=((u-cx)*distance/fx, (v-cy)*distance/fy, distance),
                                bbox=bbox, depth=distance, feature=feature, identity_score=score,
                                identity_verified=bool(identity['references']) and score <= identity['reacquire_distance'],
-                               valid_ratio=float(full[bbox[1]:bbox[1]+bbox[3], bbox[0]:bbox[0]+bbox[2]].mean())))
-    return candidates, empty
+                               valid_ratio=float(full[bbox[1]:bbox[1]+bbox[3], bbox[0]:bbox[0]+bbox[2]].mean()),
+                               _support=full))
+    selected = []
+    for candidate in sorted(candidates, key=lambda c: (c['identity_score'],
+                             -int(c['_support'].sum()))):
+        x, y, w, h = candidate['bbox']
+        duplicate = False
+        for old in selected:
+            a, b, c, d = old['bbox']
+            intersection = max(0, min(x+w, a+c)-max(x, a))*max(0, min(y+h, b+d)-max(y, b))
+            # A depth window can produce a small nested fragment of the SAME
+            # measured body. IoU alone misses it. Shared actual depth pixels
+            # distinguish that fragment from separate nearby robots.
+            shared = int((candidate['_support'] & old['_support']).sum())
+            smaller = min(int(candidate['_support'].sum()), int(old['_support'].sum()))
+            if (abs(candidate['depth']-old['depth']) < .15 and
+                    (intersection / float(w*h+c*d-intersection) > .45 or
+                     (smaller > 0 and shared / float(smaller) > .65))):
+                duplicate = True
+                break
+        if not duplicate:
+            selected.append(candidate)
+    for candidate in selected:
+        empty[candidate.pop('_support')] = 255
+    return selected, empty

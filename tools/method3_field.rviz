@@ -1,0 +1,81 @@
+Panels:
+  - Class: rviz/Displays
+    Name: Displays
+  - Class: rviz/Views
+    Name: Views
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz/Grid
+      Name: Ground grid
+      Enabled: true
+      Cell Size: 0.5
+      Plane Cell Count: 20
+      Reference Frame: base_footprint
+    - Class: rviz/PointCloud2
+      Name: Live obstacle point cloud
+      Enabled: true
+      Topic: /method3_motion/obstacle_cloud
+      Queue Size: 1
+      Style: Points
+      Size (Pixels): 3
+      Color Transformer: FlatColor
+      Color: 255; 80; 40
+      Position Transformer: XYZ
+      Decay Time: 0
+    - Class: rviz/PointCloud2
+      Name: Observed ground and clearing cloud
+      Enabled: true
+      Topic: /method3_motion/clearing_cloud
+      Queue Size: 1
+      Style: Points
+      Size (Pixels): 2
+      Color Transformer: FlatColor
+      Color: 60; 180; 230
+      Position Transformer: XYZ
+      Decay Time: 0
+    - Class: rviz/Map
+      Name: Local obstacle map
+      Enabled: true
+      Topic: /method3_motion/move_base/local_costmap/costmap
+      Color Scheme: costmap
+      Alpha: 0.55
+    - Class: rviz/Path
+      Name: Planned route
+      Enabled: true
+      Topic: /method3_motion/move_base/DWAPlannerROS/global_plan
+      Color: 50; 255; 80
+      Line Style: Lines
+      Line Width: 0.03
+    - Class: rviz/Pose
+      Name: Front robot target
+      Enabled: true
+      Topic: /method3_motion/target_pose
+      Color: 255; 220; 30
+      Shape: Arrow
+      Shaft Length: 0.2
+      Shaft Radius: 0.03
+      Head Length: 0.1
+      Head Radius: 0.06
+  Enabled: true
+  Global Options:
+    Background Color: 35; 35; 35
+    Fixed Frame: odom
+    Frame Rate: 15
+  Tools:
+    - Class: rviz/Interact
+    - Class: rviz/MoveCamera
+  Views:
+    Current:
+      Class: rviz/Orbit
+      Distance: 4
+      Pitch: 0.65
+      Yaw: 3.14
+      Target Frame: base_footprint
+      Focal Point:
+        X: 1
+        Y: 0
+        Z: 0
+Window Geometry:
+  Width: 1000
+  Height: 700

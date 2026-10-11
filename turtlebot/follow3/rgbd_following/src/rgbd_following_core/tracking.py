@@ -10,7 +10,7 @@ def distance(a, b):
 class Tracker(object):
     def __init__(self, confirmations=4, timeout=0.5, speed=0.5, jitter=0.12,
                  reacquire_radius=0.45, ambiguity_margin=0.10,
-                 identity_reacquire_radius=1.5, reacquire_confirmations=6):
+                 identity_reacquire_radius=1.5, reacquire_confirmations=6, empty_grace=0.):
         if (not isinstance(confirmations, int) or confirmations < 2 or
                 not all(finite(v) and v > 0 for v in
                         (timeout, speed, jitter, reacquire_radius, ambiguity_margin, identity_reacquire_radius)) or
@@ -18,6 +18,9 @@ class Tracker(object):
                 identity_reacquire_radius < reacquire_radius):
             raise ValueError('Invalid tracker configuration')
         self.confirmations, self.timeout = confirmations, timeout
+        if not finite(empty_grace) or not 0 <= empty_grace <= min(.15, timeout):
+            raise ValueError('Empty-observation grace must be within 0..min(.15, timeout)')
+        self.empty_grace = empty_grace
         self.speed, self.jitter = speed, jitter
         self.reacquire_radius, self.margin = reacquire_radius, ambiguity_margin
         self.anchor = None
@@ -51,6 +54,14 @@ class Tracker(object):
         pairs = [(p, v is True) for p, v in zip(candidates, verified)
                  if len(p) == 3 and all(finite(x) for x in p)]
         candidates = [p for p, v in pairs]
+        if (not candidates and self.locked and self.count > 0 and self.stamp is not None and
+                0 <= stamp-self.stamp <= self.empty_grace):
+            # Missing depth for one frame still reports NO target observation.
+            # Preserve association only, so the next actual compatible sample
+            # need not rebuild a four-frame confirmation. Do not renew anchor
+            # timestamps, return an invented pose, or relax ambiguity handling.
+            self.reason = 'observation_gap'
+            return None
         if self.stamp is not None and stamp - self.stamp > self.timeout:
             self.count = 0
             if not self.locked:

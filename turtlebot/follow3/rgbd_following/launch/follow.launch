@@ -1,6 +1,8 @@
 <launch>
   <arg name="robot_ns" default="tb3" />
   <arg name="execute" default="false" />
+  <arg name="commissioning_clearance" default="false" />
+  <arg name="allow_unobserved" default="false" />
   <arg name="settings" default="$(find rgbd_following)/config/follow.yaml" />
   <!-- Defaults suit ONE robot with the course's existing unprefixed drivers. -->
   <arg name="odom_frame" default="odom" />
@@ -24,6 +26,26 @@
       <rosparam command="load" file="$(find rgbd_following)/config/navigation.yaml" />
       <rosparam command="load" file="$(find rgbd_following)/config/costmap.yaml" ns="global_costmap" />
       <rosparam command="load" file="$(find rgbd_following)/config/costmap.yaml" ns="local_costmap" />
+      <!-- Explicit supervised field policy; default remains unknown=blocked.
+           This is a planning assumption, not evidence that the space is clear.
+           Live obstacle marking, voxel height protection and gate stay active. -->
+      <param if="$(arg allow_unobserved)" name="global_costmap/track_unknown_space" value="false" />
+      <param if="$(arg allow_unobserved)" name="local_costmap/track_unknown_space" value="false" />
+      <param if="$(arg allow_unobserved)" name="global_costmap/obstacles/track_unknown_space" value="false" />
+      <param if="$(arg allow_unobserved)" name="local_costmap/obstacles/track_unknown_space" value="false" />
+      <!-- Explicit, temporary commissioning evidence only. Never enabled by default. -->
+      <rosparam if="$(arg commissioning_clearance)" param="global_costmap/plugins">
+        - {name: obstacles, type: 'costmap_2d::VoxelLayer'}
+        - {name: commissioning_clearance, type: 'rgbd_following/CommissioningClearanceLayer'}
+        - {name: inflation, type: 'costmap_2d::InflationLayer'}
+      </rosparam>
+      <rosparam if="$(arg commissioning_clearance)" param="local_costmap/plugins">
+        - {name: obstacles, type: 'costmap_2d::VoxelLayer'}
+        - {name: commissioning_clearance, type: 'rgbd_following/CommissioningClearanceLayer'}
+        - {name: inflation, type: 'costmap_2d::InflationLayer'}
+      </rosparam>
+      <param if="$(arg commissioning_clearance)" name="global_costmap/commissioning_clearance/polygon_topic" value="/$(arg robot_ns)/commissioning_clearance" />
+      <param if="$(arg commissioning_clearance)" name="local_costmap/commissioning_clearance/polygon_topic" value="/$(arg robot_ns)/commissioning_clearance" />
       <param name="global_costmap/global_frame" value="$(arg odom_frame)" />
       <param name="global_costmap/robot_base_frame" value="$(arg base_frame)" />
       <param name="local_costmap/global_frame" value="$(arg odom_frame)" />

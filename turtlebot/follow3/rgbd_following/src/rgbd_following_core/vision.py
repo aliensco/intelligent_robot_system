@@ -79,7 +79,11 @@ def detect(rgb, depth_m, camera, config):
         raise ValueError('registered_size_mismatch')
     if config.get('proposal_mode', 'color') == 'depth_body':
         from .body import detect_body
-        return detect_body(rgb, depth_m, camera, config)
+        candidates, mask = detect_body(rgb, depth_m, camera, config)
+        if not candidates and config.get('rgb_templates'):
+            from .rgb_templates import detect_templates
+            return detect_templates(rgb, depth_m, camera, config)
+        return candidates, mask
     hsv = cv2.cvtColor(rgb, cv2.COLOR_BGR2HSV)
     mask = np.zeros(depth_m.shape, dtype=np.uint8)
     for band in config['hsv_bands']:

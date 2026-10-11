@@ -37,13 +37,32 @@ def validate(config, execute=False):
             positive(ref, ('height_m',))
             if len(ref.get('silhouette', [])) != 64 or not all(finite(v) and 0 <= v <= 1 for v in ref['silhouette']):
                 raise ValueError('Invalid body silhouette')
-    if not config['follow_distance'] > config['minimum_distance'] > 2 * config['footprint_radius']:
-        raise ValueError('Require follow_distance > minimum_distance > twice footprint radius')
+    # Target depth is a surface point, not the other vehicle's centre.
+    if not config['follow_distance'] > config['minimum_distance'] > config['footprint_radius']:
+        raise ValueError('Require follow_distance > minimum_distance > footprint radius')
     if config['sync_slop'] >= config['target_timeout']:
         raise ValueError('Sync slop must be less than target timeout')
     if config['max_linear'] > .3 or config['max_angular'] > .8:
         raise ValueError('Competition speed limit exceeded')
     p = config['perception']
+    if 'standoff_min_distance' in config:
+        if not config['minimum_distance'] < config['standoff_min_distance'] <= config['follow_distance']:
+            raise ValueError('Standoff minimum must exceed stop distance and not exceed desired gap')
+    templates = p.get('rgb_templates', [])
+    if not isinstance(templates, list) or len(templates) > 8:
+        raise ValueError('Expected up to eight fixed RGB templates')
+    for template in templates:
+        pixels = template.get('pixels', [])
+        if (not 8 <= len(pixels) <= 64 or not isinstance(pixels[0], list) or
+                not 8 <= len(pixels[0]) <= 64 or
+                any(not isinstance(row, list) or len(row) != len(pixels[0]) or
+                    any(not isinstance(v, int) or not 0 <= v <= 255 for v in row) for row in pixels)):
+            raise ValueError('Invalid fixed RGB template pixels')
+        if (not template.get('label') or
+                not .5 <= template.get('aspect', 0) <= 6 or
+                not 0 < template.get('width_m', 0) <= .8 or
+                not .7 <= template.get('min_correlation', .78) <= template.get('verified_correlation', .9) <= 1):
+            raise ValueError('Invalid fixed RGB template geometry or correlation')
     mode = p.get('proposal_mode', 'color')
     if mode not in ('color', 'depth_body'):
         raise ValueError('Unknown proposal mode')
@@ -52,6 +71,10 @@ def validate(config, execute=False):
         raise ValueError('Identity references do not match proposal mode; enroll new views')
     if mode == 'depth_body':
         body = p['body']
+        if 'max_support_height_m' in body:
+            positive(body, ('max_support_height_m',))
+            if not .035 < body['max_support_height_m'] <= .8:
+                raise ValueError('Invalid ground-relative recognition support height')
         positive(body, ('min_width_m', 'max_width_m', 'min_height_m', 'max_height_m'))
         if not (body['min_width_m'] < body['max_width_m'] <= .8 and
                 body['min_height_m'] < body['max_height_m'] <= .8):

@@ -357,6 +357,18 @@ python -m unittest discover -s tests -p 'test_rgbd*.py' -v
 
 ## 不加色标的现场标定
 
+### 跟随前车 Turtlebot 的初步适配
+
+Turtlebot 的底盘与层板可能在深度图中分离，不能直接复用 TonyPi 的整体宽高范围和模板。
+`perception.body.max_support_height_m` 可选地限制识别使用的离地高度带，
+例如现场以 0.17 m 上界登记可见底盘区域，再结合实际宽高与独立身份模板筛选。
+该高度带只作用于识别，不裁剪避障点云；未配置时保留原行为。
+参数必须针对实车采样验证，黑色底盘的无效深度、相似车辆和人的脚部仍可能造成漏检或歧义。
+
+本次前车初步适配：人工确认底盘 ROI，3 帧登记、另 5 帧静止留出均为唯一目标，
+随后 6 秒实时预览中 24/24 帧为一个候选。它尚未通过无目标、转向或运动验收，
+不能据此开启完整跟随。当前参考模板保留在现场数据目录，所有标定标志仍为 false。
+
 黑白 TonyPi 的正面白色胸板在背面不可见，不能直接沿用绿色示例或胸板模板。
 可在本地配置中设置 `perception.proposal_mode: depth_body`，清空旧 `identity.references`，
 使用已有 `tools/enroll_rgbd_identity.py` 重新登记正面、背面、左右侧和抱物状态的完整身体样本。
@@ -394,3 +406,48 @@ rosrun image_view image_view image:=/rgbd_identity_preview/preview
 修复后的同场景 12 秒静止观察共 51 帧：48 帧有单个候选，3 帧未检出，
 检测耗时最高约 78 ms；这仍有漏检，不能据此宣称复杂赛道识别或绕障验收通过。
 另外本次测试前 Kinect 曾停止出帧，重启驱动后恢复，USB 长时间稳定性仍需排查。
+
+### 近车盲区的短距离调试
+
+`follow.launch` 的 `commissioning_clearance` 默认关闭。现场人员检查指定区域后，调试启动时可设置 `commissioning_clearance:=true`，再执行 `tools/publish_commissioning_clearance.py --confirm-clearance --namespace /method3_motion`。该工具不发送速度；默认记录底盘原点前 0.60 m、后 0.50 m、左右各 0.50 m 的地面矩形。区域固定在 odom 中，不随小车移动，默认 10 秒自动失效；障碍层发现的障碍不会被抹除。它只用于已检查场地的短距离联调，不能替代比赛运行时的近场传感器覆盖。实际运动仍使用 `run_rgbd_bounded_trial.py` 的独立限幅测试。
+
+目标终点暂时不可通行时，初始实时跟随现在可选择已观测通行区域内的中间目标；完整车体扫过的路径仍逐段检查。历史目标轨迹不被直线截弯，终点完成条件也不变。
+# 2026-10-10 场地测试入口（尚未完成全程绕障验收）
+
+当前部署：Ubuntu 16.04 / ROS Kinetic，工作空间 `~/codex_method3_ws`，
+运行配置 `~/codex_method3_runtime/turtlebot_follow_current.launch`。
+该配置使用本车 RGB-D 识别前方 Turtlebot，跟随距离 0.8 m。
+
+ROS master 已运行时，在 Ubuntu 执行：
+
+```bash
+bash ~/codex_method3_motion_20261010/tools/start_method3_field.sh
+```
+
+入口自动启动缺失的相机、底盘及跟随节点，打开识别预览，记录状态和 rosbag，
+运行最长 300 秒、累计行程最多 5 米的低速场地测试。最大下发速度 0.05 m/s。
+Ctrl+C 会先停止运动，再关闭本次入口启动的进程；已有的外部进程保留。
+底盘实际输入为 `/codex_diagnostics/disabled_velocity_input`，其名称不表示禁用。
+必须保留 `sensors.launch` 的对应 remap；不能换为另一个底盘启动文件后直接运行。
+
+若本次确实人工检查了起步区域，可显式登记一次固定区域（示例前方60 cm、
+后方30 cm、左右各30 cm，从底盘坐标原点量起）：
+
+```bash
+bash ~/codex_method3_motion_20261010/tools/start_method3_field.sh \
+  --confirm-clearance --clearance-front .60 --clearance-half-width .30
+```
+
+登记只覆盖固定区域，10秒到期，不自动续期，不随车移动；不清除已有障碍。
+持续跟随仍依赖实时深度观测覆盖，不能把此入口当作已通过比赛验收的最终版本。
+发生目标丢失或路径阻挡时发送零速度，等待新鲜且通过检查的目标/规划输出；
+持续暂停60秒结束。里程计、底盘传感器、输出节点唯一性等异常直接终止。
+
+日志目录会打印为 `SESSION_LOG`，位于 `~/codex_method3_runtime/field_sessions/`。
+其中 `motion.log` 含运动量和结束原因，`status.jsonl` 含识别/规划/速度门控状态变化，
+`telemetry.bag` 用于回放。可用 `--duration 12 --distance .15` 做短轮测试。
+
+已实测一轮12秒测试：累计移动0.1392 m，两轮编码器增量1400/1862，
+最高实测线速度0.0341 m/s，以时长上限结束；仍出现目标歧义暂停和地图覆盖阻挡。
+捕获同一车的嵌套局部候选后，增加共享深度像素去重，回放由两个候选变为一个。
+此结果不证明完整绕障或移动前车的连续跟随已通过。

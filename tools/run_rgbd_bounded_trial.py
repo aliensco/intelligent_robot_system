@@ -89,15 +89,21 @@ def monotonic_clock():
 class Trial(object):
     """Pure state machine. A stop after arming is terminal, never auto-resumes."""
     def __init__(self, created, duration=4., distance=.06, yaw_limit=.1,
-                 max_linear=.05, max_angular=.15, preflight=15.):
+                 max_linear=.05, max_angular=.15, preflight=15., resume_after_target_loss=False,
+                 field_test=False):
         values = (created, duration, distance, yaw_limit, max_linear, max_angular, preflight)
         if not all(finite(v) for v in values) or not (
-                0 < duration <= 8 and 0 < distance <= .08 and 0 < yaw_limit <= .1 and
+                0 < duration <= (300 if field_test else 8) and
+                0 < distance <= (5 if field_test else .08) and
+                0 < yaw_limit <= (2*math.pi if field_test else .1) and
                 0 < max_linear <= .05 and 0 < max_angular <= .15 and 0 < preflight <= 30):
             raise ValueError('trial bounds exceed commissioning limits')
         self.created, self.duration, self.limit = created, duration, distance
         self.yaw_limit, self.max_linear, self.max_angular = yaw_limit, max_linear, max_angular
         self.preflight, self.started = preflight, None
+        self.resume_after_target_loss = resume_after_target_loss
+        self.field_test = field_test
+        self.paused_since = None
         self.data, self.previous = {}, None
         self.distance = self.yaw = 0.
         self.reason, self.terminal = 'waiting_for_inputs', False
@@ -112,8 +118,9 @@ class Trial(object):
         if ((name == 'estop' and value) or
                 (name in ('sensors', 'lease') and not value)):
             self.stop('event_veto:' + name)
-        if self.started is not None and ((name in ('target', 'graph') and not value) or
-                                        (name == 'status' and value not in APPROVED)):
+        if self.started is not None and ((name == 'graph' and not value) or
+                (not self.resume_after_target_loss and
+                 ((name == 'target' and not value) or (name == 'status' and value not in APPROVED)))):
             self.stop('event_veto:' + name)
 
     def stop(self, reason):
@@ -162,11 +169,26 @@ class Trial(object):
             return self.stop(self.reason) if self.started is not None else (0., 0.)
         if not d['target'] or d['status'] not in APPROVED:
             self.reason = 'target_or_gate_veto:' + str(d['status'])
+            if self.resume_after_target_loss and self.started is not None:
+                if self.paused_since is None:
+                    self.paused_since = now
+                if now-self.paused_since >= (60. if self.field_test else 2.):
+                    return self.stop('target_or_gate_recovery_timeout')
+                # Emit zero on every cycle. Only fresh, fully confirmed target
+                # AND approved gate output permit resumption; trial budgets
+                # and odometry accumulation are never reset during a pause.
+                self.reason = 'paused_for_target_or_gate'
+                return (0., 0.)
             return self.stop(self.reason) if self.started is not None else (0., 0.)
+        self.paused_since = None
         v, w, unsupported = d['command']
         if (not all(finite(q) for q in (v, w, unsupported)) or unsupported > 1e-6 or
-                not 0 <= v <= self.max_linear + 1e-9 or abs(w) > self.max_angular + 1e-9):
+                not 0 <= v <= self.max_linear + 1e-7 or abs(w) > self.max_angular + 1e-7):
             return self.stop('command_out_of_bounds')
+        # DWA internally uses float32: 0.15 can arrive as 0.15000000596.
+        # Accept only serialization-scale error, then clamp the REAL output.
+        v = min(v, self.max_linear)
+        w = max(-self.max_angular, min(w, self.max_angular))
         measured, lateral, angular = d['odom']
         if abs(measured) > .065 or abs(lateral) > .015 or abs(angular) > .18:
             return self.stop('measured_speed_exceeded')
@@ -179,7 +201,8 @@ class Trial(object):
             self.started = now
         speed, rotation = max(abs(measured), v), max(abs(angular), abs(w))
         # 0.3 s reaction and 0.3 m/s^2 braking, with 1 cm extra reserve.
-        if self.distance >= self.limit or self.distance + speed * .3 + speed ** 2 / .6 >= .09:
+        stopping_limit = self.limit + .03 if self.field_test else .09
+        if self.distance >= self.limit or self.distance + speed * .3 + speed ** 2 / .6 >= stopping_limit:
             return self.stop('travel_budget')
         if self.yaw + rotation * .3 + rotation ** 2 / 1.2 >= self.yaw_limit:
             return self.stop('rotation_budget')
@@ -201,6 +224,10 @@ def parser():
     p.add_argument('--max-linear', type=float, default=.05)
     p.add_argument('--max-angular', type=float, default=.15)
     p.add_argument('--preflight', type=float, default=15.)
+    p.add_argument('--resume-after-target-loss', action='store_true',
+                   help='Within the same bounded trial, pause at zero and resume after fresh target/gate confirmation')
+    p.add_argument('--field-test', action='store_true',
+                   help='Explicit field session: up to 300 s / 5 m, same speed and fresh-input checks')
     p.add_argument('--odom-frame', default='odom')
     p.add_argument('--base-frame', default='base_footprint')
     return p
@@ -225,7 +252,8 @@ def main():
         raise ValueError('all input/output topics must be distinct absolute names')
     clock = monotonic_clock()
     trial = Trial(clock(), args.duration, args.distance, args.yaw_limit,
-                  args.max_linear, args.max_angular, args.preflight)
+                  args.max_linear, args.max_angular, args.preflight, args.resume_after_target_loss,
+                  args.field_test)
     lock, killed = threading.RLock(), threading.Event()
     publisher = rospy.Publisher(args.output, Twist, queue_size=1)
     heartbeat = [clock()]

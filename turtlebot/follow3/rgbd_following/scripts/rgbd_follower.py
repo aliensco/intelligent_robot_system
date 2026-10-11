@@ -11,7 +11,7 @@ from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import OccupancyGrid, Odometry
 from std_msgs.msg import Bool, String
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
-from rgbd_following_core.motion import fresh, need_goal
+from rgbd_following_core.motion import fresh, need_goal, observed_prefix, clear_standoff
 from rgbd_following_core.settings import validate
 from rgbd_following_core.tracking import Trail, Completion, distance, circle_inside_polygon
 from rgbd_following_core.ros_helpers import same_frame, grid_message, transform_pose, OdometryState
@@ -192,8 +192,21 @@ class Follower(object):
                                  self.odometry.speed <= c['stopped_linear'] and self.odometry.angular <= c['stopped_angular']):
             self.finished = True
             return self.block('finished')
+        partial_goal = False
+        alternate_goal = False
         if not self.grid.clear(point[0], point[1], c['footprint_radius']):
-            return self.block('follow_goal_blocked')
+            alternate = (clear_standoff(self.grid, robot, self.target, c['follow_distance'],
+                         c['footprint_radius'], c.get('standoff_min_distance', c['follow_distance']))
+                         if live_standoff and self.mission != 'done' and
+                         'standoff_min_distance' in c else None)
+            if alternate is not None:
+                point, alternate_goal = alternate, True
+        if not self.grid.clear(point[0], point[1], c['footprint_radius']):
+            prefix = (observed_prefix(self.grid, robot, point, c['footprint_radius'])
+                      if live_standoff and self.mission != 'done' else None)
+            if prefix is None:
+                return self.block('follow_goal_blocked')
+            point, partial_goal = prefix, True
         if self.mission == 'done' and distance(robot, point) <= c['finish_tolerance']:
             # Hold at final gap while verifying stationary target and finish zone.
             reason = 'finish_region_unconfigured'
@@ -211,7 +224,9 @@ class Follower(object):
             self.client.send_goal(msg, done_cb=self.on_navigation_done)
             self.goal, self.goal_time = point, wall
         self.allowed.publish(True)
-        self.status.publish('following_live_standoff' if live_standoff else 'following')
+        self.status.publish('following_alternate_standoff' if alternate_goal else
+                            ('following_observed_prefix' if partial_goal else
+                            ('following_live_standoff' if live_standoff else 'following')))
 
 
 if __name__ == '__main__':

@@ -10,6 +10,25 @@ from rgbd_following_core.motion import Grid, swept_clear, need_goal, fresh
 
 
 class AssociationTests(unittest.TestCase):
+    def test_optional_empty_grace_preserves_association_but_never_returns_old_pose(self):
+        tracker = Tracker(confirmations=2, empty_grace=.12)
+        tracker.update([(1., 0., .2)], 1.)
+        tracker.update([(1., 0., .2)], 1.1)
+        self.assertIsNone(tracker.update([], 1.13))
+        self.assertEqual(tracker.reason, 'observation_gap')
+        self.assertEqual(tracker.stamp, 1.1)
+        self.assertEqual(tracker.update([(1.01, 0., .2)], 1.16), (1.01, 0., .2))
+        self.assertIsNone(tracker.update([], 1.4))
+        self.assertEqual(tracker.count, 0)
+        self.assertIsNone(tracker.update([(1.01, 0., .2)], 1.43))
+
+    def test_empty_grace_does_not_relax_two_target_ambiguity(self):
+        tracker = Tracker(confirmations=2, empty_grace=.12)
+        tracker.update([(1., 0., .2)], 1.)
+        tracker.update([(1., 0., .2)], 1.1)
+        self.assertIsNone(tracker.update([(1.02, 0., .2), (.98, 0., .2)], 1.13))
+        self.assertEqual(tracker.reason, 'ambiguous_target')
+
     def test_consecutive_confirmation_and_loss(self):
         tracker = Tracker(confirmations=3)
         self.assertIsNone(tracker.update([(1., 0., .3)], 1.))

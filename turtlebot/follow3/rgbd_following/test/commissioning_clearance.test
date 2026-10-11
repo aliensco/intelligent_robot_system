@@ -1,0 +1,26 @@
+<launch>
+  <node pkg="tf" type="static_transform_publisher" name="clearance_test_tf"
+        args="0 0 0 0 0 0 clearance_odom clearance_base 50" />
+  <group ns="clearance_test">
+    <node pkg="move_base" type="move_base" name="move_base" required="true">
+      <rosparam command="load" file="$(find rgbd_following)/config/navigation.yaml" />
+      <rosparam command="load" file="$(find rgbd_following)/config/costmap.yaml" ns="global_costmap" />
+      <rosparam command="load" file="$(find rgbd_following)/config/costmap.yaml" ns="local_costmap" />
+      <rosparam param="global_costmap/plugins">
+        - {name: obstacles, type: 'costmap_2d::VoxelLayer'}
+        - {name: clearance, type: 'rgbd_following/CommissioningClearanceLayer'}
+        - {name: inflation, type: 'costmap_2d::InflationLayer'}
+      </rosparam>
+      <param name="global_costmap/clearance/polygon_topic" value="/clearance_test/checked" />
+      <param name="global_costmap/clearance/lease_seconds" value="1.5" />
+      <param name="global_costmap/global_frame" value="clearance_odom" />
+      <param name="global_costmap/robot_base_frame" value="clearance_base" />
+      <param name="local_costmap/global_frame" value="clearance_odom" />
+      <param name="local_costmap/robot_base_frame" value="clearance_base" />
+      <param name="global_costmap/resolution" value="0.02" />
+      <remap from="cmd_vel" to="unused_velocity" />
+      <remap from="odom" to="unused_odometry" />
+    </node>
+  </group>
+  <test test-name="commissioning_clearance" pkg="rgbd_following" type="commissioning_clearance.py" time-limit="45" />
+</launch>

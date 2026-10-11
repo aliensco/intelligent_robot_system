@@ -357,7 +357,7 @@ class NodeTests(unittest.TestCase):
         self.assertEqual(n.output().linear.x, 0.)
         self.assertEqual(n.reason, 'measured_stopping_envelope_blocked')
 
-    def test_perception_callback_confirms_then_rejects_duplicate(self):
+    def test_perception_callback_ignores_duplicate_without_extending_freshness(self):
         import importlib.util
         from types import ModuleType
         from unittest.mock import patch
@@ -375,6 +375,7 @@ class NodeTests(unittest.TestCase):
         clouds.create_cloud_xyz32 = lambda header, points: self.NS(header=header, points=points)
         fake['sensor_msgs.point_cloud2'] = clouds
         with patch.dict(sys.modules, fake), \
+             patch.object(sys.modules['rospy'], 'logwarn_throttle', self.Mock(), create=True), \
              patch.object(sys.modules['sensor_msgs.msg'], 'Image', object, create=True), \
              patch.object(sys.modules['sensor_msgs.msg'], 'CameraInfo', object, create=True), \
              patch.object(sys.modules['std_msgs.msg'], 'String', lambda data: self.NS(data=data)):
@@ -413,14 +414,21 @@ class NodeTests(unittest.TestCase):
             self.assertEqual(n.cloud.publish.call_count, 4)
             self.assertEqual(n.clearing.publish.call_count, 4)
             self.assertIs(n.clearing.publish.call_args[0][0].header, messages[1].header)
+            receipt, pair = n.receipt, n.last_pair[:]
+            publish_count = n.valid.publish.call_count
+            self.wall += .1
             n.callback(*messages)
-            n.valid.publish.assert_called_with(False)
+            n.valid.publish.assert_called_with(True)
+            self.assertEqual(n.valid.publish.call_count, publish_count)
+            self.assertEqual(n.receipt, receipt)
+            self.assertEqual(n.last_pair, pair)
             self.assertEqual(n.cloud.publish.call_count, 4)
             self.assertEqual(n.clearing.publish.call_count, 4)
-            self.assertEqual(json.loads(n.status.publish.call_args[0][0].data)['reason'], 'repeated_or_out_of_order_input')
+            self.assertTrue(json.loads(n.status.publish.call_args[0][0].data)['target_valid'])
             # Freshness failure must not publish another clearing cloud either.
             self.now += 1.
             n.callback(*messages)
+            n.valid.publish.assert_called_with(False)
             self.assertEqual(n.clearing.publish.call_count, 4)
             depth[:] = 4.3
             for message in messages:

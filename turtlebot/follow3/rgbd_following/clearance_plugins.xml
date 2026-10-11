@@ -1,0 +1,6 @@
+<library path="lib/librgbd_commissioning_clearance">
+  <class name="rgbd_following/CommissioningClearanceLayer"
+         type="rgbd_following::CommissioningClearanceLayer" base_class_type="costmap_2d::Layer">
+    <description>Expiring operator-confirmed clearance, commissioning only; fills unknown cells without erasing obstacles.</description>
+  </class>
+</library>
